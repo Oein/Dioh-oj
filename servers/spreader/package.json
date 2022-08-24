@@ -2,5 +2,16 @@
   "name": "spreader",
   "version": "1.0.0",
   "main": "index.js",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "@supabase/realtime-js": "^1.7.4",
+    "axios": "^0.27.2",
+    "dotenv": "^16.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.19"
+  },
+  "scripts": {
+    "dev": "nodemon --watch src/**/* -e ts --exec \"tsc; node dist/index.js\""
+  }
 }
