@@ -18,6 +18,7 @@ model SourceCode {
   problem String
   usedTime String?
   usedMemory String?
+  error String?
 }
 
 model Problem {

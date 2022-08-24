@@ -18,6 +18,7 @@ model SourceCode {
   problem String
   usedTime String?
   usedMemory String?
+  error String?
 }
 
 model Problem {
@@ -26,5 +27,6 @@ model Problem {
   name String
   maxTime Int
   maxMemoryMB Int
-  testCase Json
+  testCaseInputs String[]
+  testCaseOutputs String[]
 }
