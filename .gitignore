@@ -34,3 +34,7 @@
 # typescript
 /**/*.tsbuildinfo
 /**/next-env.d.ts
+
+/**/.env
+/**/*Private*
+/servers/checker/code
