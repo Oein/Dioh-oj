@@ -168,6 +168,7 @@ function queueing() {
                 data: {
                     usedMemory: jresult.ram.toString(),
                     usedTime: jresult.time.toString(),
+                    error: (jresult.error || "").toString(),
                 },
             })
                 .then(() => {

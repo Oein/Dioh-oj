@@ -27,6 +27,5 @@ model Problem {
   name String
   maxTime Int
   maxMemoryMB Int
-  testCaseInputs String[]
-  testCaseOutputs String[]
+  testCase Json
 }
