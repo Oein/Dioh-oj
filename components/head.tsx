@@ -1,10 +1,12 @@
-import { Grid } from "@nextui-org/react";
+import { Grid, useTheme } from "@nextui-org/react";
 import Link from "next/link";
 
 export default function MyHead() {
+  let { theme } = useTheme();
   return (
     <div
       style={{
+        color: `${theme?.colors.green800}`,
         position: "fixed",
         top: "0px",
         left: "0px",
@@ -12,7 +14,7 @@ export default function MyHead() {
         height: "76px",
         padding: "7px",
         paddingTop: "0px",
-        borderBottom: "1px solid rgba(0 , 0 , 0 ,0.5)",
+        borderBottom: `1px solid ${theme?.colors.neutralBorder}`,
       }}
     >
       <Grid.Container>
