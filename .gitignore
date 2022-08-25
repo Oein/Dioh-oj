@@ -39,4 +39,5 @@
 /**/*Private*
 /servers/checker/code
 /servers/*/dist
+/servers/checker/dist/**/*
 .vercel
