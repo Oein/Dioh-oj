@@ -5,6 +5,10 @@ import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { createTheme } from "@nextui-org/react";
 import { SessionProvider } from "next-auth/react";
 
+{
+  /* Bruh */
+}
+
 const lightTheme = createTheme({
   type: "dark",
   theme: {},
