@@ -3,6 +3,7 @@ import type { AppProps } from "next/app";
 import { NextUIProvider } from "@nextui-org/react";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { createTheme } from "@nextui-org/react";
+import { SessionProvider } from "next-auth/react";
 
 const lightTheme = createTheme({
   type: "dark",
@@ -16,18 +17,20 @@ const darkTheme = createTheme({
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <NextThemesProvider
-      defaultTheme="system"
-      attribute="class"
-      value={{
-        light: lightTheme.className,
-        dark: darkTheme.className,
-      }}
-    >
-      <NextUIProvider>
-        <Component {...pageProps} />
-      </NextUIProvider>
-    </NextThemesProvider>
+    <SessionProvider session={pageProps.session}>
+      <NextThemesProvider
+        defaultTheme="system"
+        attribute="class"
+        value={{
+          light: lightTheme.className,
+          dark: darkTheme.className,
+        }}
+      >
+        <NextUIProvider>
+          <Component {...pageProps} />
+        </NextUIProvider>
+      </NextThemesProvider>
+    </SessionProvider>
   );
 }
 
