@@ -1,18 +1,15 @@
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
-import { NextUIProvider } from "@nextui-org/react";
+import { NextUIProvider, theme, useTheme } from "@nextui-org/react";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { createTheme } from "@nextui-org/react";
 import { SessionProvider } from "next-auth/react";
 
-const lightTheme = createTheme({
-  type: "dark",
-  theme: {},
-});
-
 const darkTheme = createTheme({
-  type: "dark",
-  theme: {},
+  type: "light",
+  theme: {
+    colors: {},
+  },
 });
 
 function MyApp({ Component, pageProps }: AppProps) {
@@ -22,7 +19,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         defaultTheme="system"
         attribute="class"
         value={{
-          light: lightTheme.className,
+          light: darkTheme.className,
           dark: darkTheme.className,
         }}
       >
