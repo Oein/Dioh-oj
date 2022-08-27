@@ -97,7 +97,7 @@ const SignIn = ({
           }}
           color="gradient"
           onClick={() => {
-            router.back();
+            router.push("/");
           }}
         >
           Go Back
