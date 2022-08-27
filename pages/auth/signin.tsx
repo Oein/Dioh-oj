@@ -55,7 +55,7 @@ const SignIn = ({
                           showSkeleton
                           width={"2em"}
                           objectFit="contain"
-                          src="/images/github.svg"
+                          src={`/images/${provider.name.toLocaleLowerCase()}.svg`}
                           alt="Dina의 이미지"
                           color="black"
                           css={{
