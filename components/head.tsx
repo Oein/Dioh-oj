@@ -1,12 +1,15 @@
-import { Grid, Spacer, useTheme } from "@nextui-org/react";
+import { Grid, useTheme } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { Image } from "@nextui-org/react";
 import NoSSR from "react-no-ssr";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 export default function MyHead() {
   let { theme } = useTheme();
   const { data: session, status } = useSession();
+  let [userName, setUserName] = useState("Loading...");
 
   const lpad = function (padString: string, length: number) {
     var str = padString;
@@ -29,6 +32,30 @@ export default function MyHead() {
     let a = session?.user?.name;
     return `${a}#${lpad((idonlynum % 10000).toString(), 4)}`;
   }
+
+  useEffect(() => {
+    if (status != "authenticated") return;
+    let x = 0;
+    for (let i = 0; i < (session?.user?.email as string).length; i++) {
+      x += (session?.user?.email as string).charCodeAt(i);
+    }
+    let idonlynum = Math.floor(
+      parseInt((session?.user?.id as string).replace(/\D/g, "") as string) *
+        1.25 *
+        3 +
+        x
+    );
+    let a = session?.user?.name;
+    setUserName(`${a}#${lpad((idonlynum % 10000).toString(), 4)}`);
+  }, [session?.user?.email, session?.user?.id, session?.user?.name, status]);
+
+  useEffect(() => {
+    if (status != "authenticated") return;
+    axios.get(`/api/user/get/token/${session.user?.id}`).then((v) => {
+      console.log(v.data);
+      setUserName(v.data.nickName);
+    });
+  }, [session?.user?.id, status]);
 
   return (
     <div
@@ -107,7 +134,7 @@ export default function MyHead() {
                       }}
                       className="centerH"
                     >
-                      @{getUsername()}
+                      @{userName}
                     </div>
                   ) : null}
                 </Grid>
