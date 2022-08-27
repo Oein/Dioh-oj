@@ -4,9 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "npx npm-run-all build::prisma build::next",
-    "build::next": "next build",
-    "build::prisma": "prisma generate || true",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "spreader": "cd servers/spreader; yarn dev",
