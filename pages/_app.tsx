@@ -1,9 +1,11 @@
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
-import { NextUIProvider, theme, useTheme } from "@nextui-org/react";
+import { NextUIProvider } from "@nextui-org/react";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { createTheme } from "@nextui-org/react";
 import { SessionProvider } from "next-auth/react";
+import NoSSR from "react-no-ssr";
+import Head from "next/head";
 
 const darkTheme = createTheme({
   type: "light",
@@ -12,22 +14,44 @@ const darkTheme = createTheme({
   },
 });
 
+const lightTheme = createTheme({
+  type: "light",
+  theme: {
+    colors: {},
+  },
+});
+
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <SessionProvider session={pageProps.session}>
-      <NextThemesProvider
-        defaultTheme="system"
-        attribute="class"
-        value={{
-          light: darkTheme.className,
-          dark: darkTheme.className,
-        }}
-      >
-        <NextUIProvider>
-          <Component {...pageProps} />
-        </NextUIProvider>
-      </NextThemesProvider>
-    </SessionProvider>
+    <NoSSR>
+      <SessionProvider session={pageProps.session}>
+        <NextThemesProvider
+          defaultTheme="system"
+          attribute="class"
+          value={{
+            light: lightTheme.className,
+            dark: darkTheme.className,
+          }}
+        >
+          <NextUIProvider>
+            <div
+              style={{
+                marginTop: "76px",
+                padding: "5px",
+              }}
+            >
+              <Head>
+                <meta
+                  name="viewport"
+                  content="viewport-fit=cover,width=device-width,"
+                />
+              </Head>
+              <Component {...pageProps} />
+            </div>
+          </NextUIProvider>
+        </NextThemesProvider>
+      </SessionProvider>
+    </NoSSR>
   );
 }
 
