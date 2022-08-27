@@ -1,6 +1,9 @@
-import { RealtimeClient } from "@supabase/realtime-js";
 import axios from "axios";
 import "dotenv/config";
+import express from "express";
+
+const port = process.env.PORT || 5680;
+const app = express();
 
 let myServers = require("../servers.json") as string[];
 
@@ -10,45 +13,29 @@ for (let i = 0; i < myServers.length; i++) {
   serverStates.push(0);
 }
 
-var client = new RealtimeClient(process.env.URL as string, {
-  params: {
-    apikey: process.env.API_KEY as string,
-  },
+app.post("/judge", (req, res) => {
+  let id = req.query.id as string;
+
+  let judgeServerIdx = serverStates.indexOf(Math.min(...serverStates));
+  let judgeServerURL = myServers[judgeServerIdx];
+  axios
+    .post(`${judgeServerURL}/judge?id=${id}`)
+    .then((v) => {
+      console.log(`${id}/${judgeServerIdx}/${req.ip}`);
+    })
+    .catch((e) => {
+      console.error(e);
+    })
+    .finally(() => {
+      res.send(
+        `Requested your judge ${id} on judge server no.${judgeServerIdx}`
+      );
+    });
 });
 
-client.connect();
-client.onOpen(() => {
-  console.log("Socket opened.");
-
-  var databaseChanges = client.channel("realtime:*");
-  databaseChanges.on("INSERT", (e: any) => {
-    if (e.table == "SourceCode") {
-      let id = e.record.id;
-
-      let judgeServerURL =
-        myServers[serverStates.indexOf(Math.min(...serverStates))];
-      axios
-        .get(`${judgeServerURL}/judge?id=${id}`)
-        .then((v) => {
-          console.log(`Judge ${id} on ${judgeServerURL} / ${v.data}`);
-        })
-        .catch((e) => {
-          console.error(e);
-        });
-    }
-  });
-  databaseChanges.onClose(() => {
-    console.log("Realtime closed");
-  });
-  databaseChanges.onError(() => {
-    console.log("Realtime error");
-  });
-  databaseChanges.subscribe();
-});
-client.onClose(() => console.log("Socket closed."));
-client.onError((e: any) => console.log("Socket error", e));
-
-console.log(`------------------------------
+app.listen(port, () => {
+  console.log(`------------------------------
            Spreader           
            v1.0.0.0           
 ------------------------------`);
+});
