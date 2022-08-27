@@ -28,7 +28,9 @@ const SignIn = ({
   return (
     <Modal open width="340px" preventClose>
       <Modal.Header>
-        <Text size="xx-large">Sign In</Text>
+        <Text size="xx-large" className="font">
+          Sign In
+        </Text>
       </Modal.Header>
       <Modal.Body>
         {providers
@@ -76,6 +78,7 @@ const SignIn = ({
                             cursor: "pointer",
                             textAlign: "center",
                           }}
+                          className="font"
                         >
                           Sign In with <strong>{provider.name}</strong>
                         </div>
