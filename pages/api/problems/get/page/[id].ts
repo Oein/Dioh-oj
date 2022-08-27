@@ -4,13 +4,11 @@ const prisma = new PrismaClient();
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const { id } = req.query;
-  console.log(id);
   return new Promise<void>((resolve, reject) => {
     prisma.problem
-      .findFirst({
-        where: {
-          id: id as string,
-        },
+      .findMany({
+        skip: parseInt(id as string) * 100,
+        take: 100,
       })
       .then((v) => {
         if (v == null) {
@@ -18,18 +16,16 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
           resolve();
           return;
         }
-        res.send(
-          JSON.stringify({
-            body: v.body,
-            id: v.id,
-            name: v.name,
-            maxTime: v.maxTime,
-            maxMemoryMB: v.maxMemoryMB,
-            point: v.point,
-            solvedPeopleCount: v.solvedPeopleCount,
-            solveRequestedCount: v.solveRequestedCount,
-          })
-        );
+        let outputJSON = [];
+        let dtBase = v as any as any[];
+
+        for (let i = 0; i < dtBase.length; i++) {
+          outputJSON.push({
+            name: dtBase[i].name,
+            id: dtBase[i].id,
+          });
+        }
+        res.send(JSON.stringify(outputJSON));
         resolve();
       });
   });
