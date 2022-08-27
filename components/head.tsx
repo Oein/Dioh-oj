@@ -1,6 +1,8 @@
-import { useTheme } from "@nextui-org/react";
+import { Grid, Spacer, useTheme } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { Image } from "@nextui-org/react";
+import NoSSR from "react-no-ssr";
 
 export default function MyHead() {
   let { theme } = useTheme();
@@ -14,9 +16,17 @@ export default function MyHead() {
 
   function getUsername() {
     if (status != "authenticated") return "";
-    let idonlynum = parseInt(session?.user?.id.replace(/\D/g, "") as string);
+    let x = 0;
+    for (let i = 0; i < (session?.user?.email as string).length; i++) {
+      x += (session?.user?.email as string).charCodeAt(i);
+    }
+    let idonlynum = Math.floor(
+      parseInt((session?.user?.id as string).replace(/\D/g, "") as string) *
+        1.25 *
+        3 +
+        x
+    );
     let a = session?.user?.name;
-    let b = session?.user?.email;
     return `${a}#${lpad((idonlynum % 10000).toString(), 4)}`;
   }
 
@@ -53,35 +63,88 @@ export default function MyHead() {
           color: `${theme?.colors.black.value}`,
         }}
       >
-        {status == "loading" ? (
-          <div>Loading...</div>
-        ) : (
-          <>
-            {status == "authenticated" ? `@${getUsername()} ` : ""}
-            {status == "authenticated" ? (
-              <Link href="/api/auth/signout">
-                <div
-                  style={{
-                    display: "inline-block",
-                    cursor: "pointer",
-                  }}
-                >
-                  | Sign Out
-                </div>
-              </Link>
-            ) : (
-              <Link href="/api/auth/signin">
-                <div
-                  style={{
-                    cursor: "pointer",
-                  }}
-                >
-                  Sign In
-                </div>
-              </Link>
-            )}
-          </>
-        )}
+        <NoSSR>
+          {status == "loading" ? (
+            <div>Loading...</div>
+          ) : (
+            <>
+              <Grid.Container>
+                <Grid>
+                  {status == "authenticated" ? (
+                    <Image
+                      showSkeleton
+                      alt="Your profile"
+                      src={`${session?.user?.image}`}
+                      width="50px"
+                      objectFit="contain"
+                      className="centerH"
+                      css={{
+                        display: "inline-block",
+                        borderRadius: "25px",
+                        border: "2px solid rgba(0,0,0,0.5)",
+                      }}
+                    />
+                  ) : null}
+                </Grid>
+                <Grid>
+                  <div
+                    style={{
+                      width: "8px",
+                    }}
+                  ></div>
+                </Grid>
+                <Grid>
+                  {status == "authenticated" ? (
+                    <div
+                      style={{
+                        display: "inline-block",
+                        fontSize: "var(--nextui-fontSizes-xl2)",
+                      }}
+                      className="centerH"
+                    >
+                      @{getUsername()}
+                    </div>
+                  ) : null}
+                </Grid>
+                <Grid>
+                  <div
+                    style={{
+                      width: "8px",
+                    }}
+                  ></div>
+                </Grid>
+                <Grid>
+                  {status == "authenticated" ? (
+                    <Link href="/api/auth/signout">
+                      <div
+                        style={{
+                          display: "inline-block",
+                          cursor: "pointer",
+                          fontSize: "var(--nextui-fontSizes-xl2)",
+                        }}
+                        className="centerH"
+                      >
+                        Sign Out
+                      </div>
+                    </Link>
+                  ) : (
+                    <Link href="/api/auth/signin">
+                      <div
+                        style={{
+                          cursor: "pointer",
+                          fontSize: "var(--nextui-fontSizes-xl3)",
+                        }}
+                        className="centerH"
+                      >
+                        Sign In
+                      </div>
+                    </Link>
+                  )}
+                </Grid>
+              </Grid.Container>
+            </>
+          )}
+        </NoSSR>
       </div>
     </div>
   );
