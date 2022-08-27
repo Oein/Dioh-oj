@@ -1,3 +1,5 @@
+import ShortCuts from "./shortcuts";
+
 export default function Main() {
   return (
     <>
@@ -35,6 +37,15 @@ export default function Main() {
             </div>
           </div>
         </header>
+        <div
+          style={{
+            borderBottom: "1px solid var(--nextui-colors-neutralBorder)",
+            paddingTop: "32px",
+            paddingBottom: "32px",
+          }}
+        >
+          <ShortCuts />
+        </div>
       </article>
     </>
   );
