@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import MyHead from "../../../components/head";
 import axios from "axios";
-import { Grid, Image, Table } from "@nextui-org/react";
+import { Grid, Image, Link, Table } from "@nextui-org/react";
 
 // Markdown
 import { CopyToClipboard } from "react-copy-to-clipboard";
@@ -25,6 +25,8 @@ export default function ProblemPage() {
   let [problemPoint, setProblemPoint] = useState("Loading...");
   let [problemReqs, setProblemReqs] = useState("Loading...");
   let [problemSucs, setProblemSucs] = useState("Loading...");
+
+  let { query } = router;
 
   // 1번만 실행
   useEffect(() => {
@@ -63,6 +65,39 @@ export default function ProblemPage() {
   return (
     <article className="container">
       <MyHead />
+
+      {/* Option Menu */}
+      <Grid.Container>
+        <Grid>
+          <div
+            className="padding5px"
+            style={{
+              background: "var(--nextui-colors-success)",
+              color: "white",
+            }}
+          >
+            문제
+          </div>
+        </Grid>
+        <Grid>
+          <div
+            style={{
+              width: "5px",
+            }}
+          ></div>
+        </Grid>
+        <Grid>
+          <Link
+            href={`/problem/${query.idx}/submit`}
+            style={{
+              color: "var(--nextui-colors-text)",
+            }}
+          >
+            <div className="padding5px">제출</div>
+          </Link>
+        </Grid>
+      </Grid.Container>
+
       {/* Title */}
       <div
         style={{
@@ -145,6 +180,9 @@ export default function ProblemPage() {
             h2: markdownH3,
             h1: markdownH3,
             h3: markdownH3,
+            p: ({ children }) => {
+              return <p className="font">{children}</p>;
+            },
           }}
         >
           {problemArticles}
@@ -169,18 +207,6 @@ export default function ProblemPage() {
           transform: scale(1.5);
         }
       `}</style>
-
-      <style>{`
-        .borderBottom {
-          border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-        }
-
-        .borderBottomColored {
-          border-bottom: 2px solid var(--nextui-colors-primary);
-          display: inline-block;
-          margin: 0 0 -2px 0;
-        }
-      `}</style>
     </article>
-  ); // http://localhost:3000/problem/1000
+  );
 }
