@@ -43,6 +43,7 @@ export default function MyHead() {
         paddingTop: "0px",
         borderBottom: `1px solid ${theme?.colors.neutralBorder}`,
       }}
+      className="container"
     >
       <Link href="/" style={{}}>
         <h1
@@ -69,23 +70,25 @@ export default function MyHead() {
           ) : (
             <>
               <Grid.Container>
+                {/* Profile Image */}
                 <Grid>
                   {status == "authenticated" ? (
                     <Image
                       showSkeleton
                       alt="Your profile"
                       src={`${session?.user?.image}`}
-                      width="50px"
+                      width="40px"
                       objectFit="contain"
                       className="centerH"
                       css={{
                         display: "inline-block",
-                        borderRadius: "25px",
+                        borderRadius: "20px",
                         border: "2px solid rgba(0,0,0,0.5)",
                       }}
                     />
                   ) : null}
                 </Grid>
+                {/* Profile Name */}
                 <Grid>
                   <div
                     style={{
@@ -93,12 +96,13 @@ export default function MyHead() {
                     }}
                   ></div>
                 </Grid>
+                {/* Sign In & Out */}
                 <Grid>
                   {status == "authenticated" ? (
                     <div
                       style={{
                         display: "inline-block",
-                        fontSize: "var(--nextui-fontSizes-xl2)",
+                        fontSize: "var(--nextui-fontSizes-xl)",
                       }}
                       className="centerH"
                     >
@@ -120,7 +124,7 @@ export default function MyHead() {
                         style={{
                           display: "inline-block",
                           cursor: "pointer",
-                          fontSize: "var(--nextui-fontSizes-xl2)",
+                          fontSize: "var(--nextui-fontSizes-xl)",
                         }}
                         className="centerH"
                       >
