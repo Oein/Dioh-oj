@@ -29,6 +29,9 @@ model Problem {
   maxTime Int
   maxMemoryMB Int
   testCase Json
+  point Int @default(0)
+  solvedPeopleCount Int @default(0)
+  solveRequestedCount Int @default(0)
 }
 
 model Account {
@@ -66,6 +69,15 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
+
+  solvedProblems String[] @default([])
+  havingPoint Int @default(0)
+  nickName String @default("")
+  nameColor String @default("#000000")
+  permission Json @default("[]")
+  Banned Boolean @default(false)
+  BanStarted Int @default(-1)
+  Warns Json @default("[]")
 }
 
 model VerificationToken {
