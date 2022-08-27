@@ -9,6 +9,11 @@ import "react-toastify/dist/ReactToastify.css";
 import NoSSR from "react-no-ssr";
 import Head from "next/head";
 
+import { useEffect } from "react";
+import Router from "next/router";
+import NProgress from "nprogress";
+import "nprogress/nprogress.css";
+
 const darkTheme = createTheme({
   type: "light",
   theme: {
@@ -24,6 +29,25 @@ const lightTheme = createTheme({
 });
 
 function MyApp({ Component, pageProps }: AppProps) {
+  useEffect(() => {
+    const start = () => {
+      NProgress.start();
+    };
+    const end = () => {
+      NProgress.done();
+    };
+
+    Router.events.on("routeChangeStart", start);
+    Router.events.on("routeChangeComplete", end);
+    Router.events.on("routeChangeError", end);
+
+    return () => {
+      Router.events.off("routeChangeStart", start);
+      Router.events.off("routeChangeComplete", end);
+      Router.events.off("routeChangeError", end);
+    };
+  }, []);
+
   return (
     <NoSSR>
       <SessionProvider session={pageProps.session}>
