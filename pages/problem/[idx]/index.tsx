@@ -16,6 +16,13 @@ import docco from "react-syntax-highlighter/dist/cjs/styles/hljs/docco";
 import { toast } from "react-toastify";
 import { HeadingComponent } from "react-markdown/lib/ast-to-react";
 
+import {
+  AiOutlineClockCircle as Time,
+  AiOutlineUser as User,
+} from "react-icons/ai";
+import { MdMemory as Memory } from "react-icons/md";
+import { FiSend as Count } from "react-icons/fi";
+
 export default function ProblemPage() {
   let router = useRouter();
   let [problemName, setProblemName] = useState("Loading...");
@@ -125,11 +132,62 @@ export default function ProblemPage() {
       {/* 문제 제한 */}
       <Table shadow={false}>
         <Table.Header>
-          <Table.Column>제한 시간</Table.Column>
-          <Table.Column>메모리 제한</Table.Column>
-          <Table.Column>포인트</Table.Column>
-          <Table.Column>제출 횟수</Table.Column>
-          <Table.Column>성공한 사람수</Table.Column>
+          <Table.Column>
+            <Grid.Container>
+              <Grid>
+                <Time size="1.5em" className="centerH rotateOnHover" />
+              </Grid>
+              <Grid>
+                <div className="centerH">제한 시간</div>
+              </Grid>
+            </Grid.Container>
+          </Table.Column>
+          <Table.Column>
+            <Grid.Container>
+              <Grid>
+                <Memory size="1.6em" className="centerH rotateOnHover" />
+              </Grid>
+              <Grid>
+                <div className="centerH">메모리 제한</div>
+              </Grid>
+            </Grid.Container>
+          </Table.Column>
+          <Table.Column>
+            <Grid.Container>
+              <Grid>
+                <Image
+                  showSkeleton
+                  src="/images/point.svg"
+                  alt="P"
+                  width={"1.4em"}
+                  className="centerH"
+                />
+              </Grid>
+              <Grid>
+                <div className="centerH">포인트</div>
+              </Grid>
+            </Grid.Container>
+          </Table.Column>
+          <Table.Column>
+            <Grid.Container>
+              <Grid>
+                <Count size="1.6em" className="centerH" />
+              </Grid>
+              <Grid>
+                <div className="centerH">제출 횟수</div>
+              </Grid>
+            </Grid.Container>
+          </Table.Column>
+          <Table.Column>
+            <Grid.Container>
+              <Grid>
+                <User size="1.6em" className="centerH" />
+              </Grid>
+              <Grid>
+                <div className="centerH">성공한 사람수</div>
+              </Grid>
+            </Grid.Container>
+          </Table.Column>
         </Table.Header>
         <Table.Body>
           <Table.Row>
@@ -160,7 +218,15 @@ export default function ProblemPage() {
                       });
                     }}
                   >
-                    <div className="copyToClipboard">C</div>
+                    <div className="copyToClipboard">
+                      <Image
+                        showSkeleton
+                        src="/images/copy.svg"
+                        alt="Copy To Clipboard"
+                        objectFit="contain"
+                        width="1.5em"
+                      />
+                    </div>
                   </CopyToClipboard>
                   <SyntaxHighlighter
                     language={match[1]}
@@ -206,6 +272,16 @@ export default function ProblemPage() {
         .copyToClipboard:hover {
           transform: scale(1.5);
         }
+      `}</style>
+
+      <style>{`
+      .rotateOnHover {
+        transition: all 1s ease;
+      }
+
+      .rotateOnHover:hover {
+        transform: translateY(-50%) rotate(360deg);
+      }
       `}</style>
     </article>
   );
