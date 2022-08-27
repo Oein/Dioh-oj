@@ -2,7 +2,7 @@ import express from "express";
 import "dotenv/config";
 import { rm, writeFile } from "fs";
 import { join as pjoin } from "path";
-import { PrismaClient, SourceCode } from "@prisma/client";
+import { PrismaClient, Problem, SourceCode } from "@prisma/client";
 import { execa } from "execa";
 import pidusage from "pidusage";
 
@@ -39,10 +39,183 @@ let langs: { [key: string]: Language } = {
     buildCommand: null,
     runCommand: "node $file",
   },
+  cpp: {
+    fileExt: "cpp",
+    buildCommand: "g++ -o $output $file",
+    runCommand: "$file",
+  },
 };
 
 async function judge(v: SourceCode) {
   return new Promise<JudgeResult>((resolve, reject) => {
+    let pro: Problem;
+    let lang: Language;
+    let codeFilePath: string;
+    let buildedFilePath: string;
+
+    let maxRam = 0;
+    let error: string | null = null;
+    let ntime = 0;
+    let scoreSum = 0;
+
+    const build = () => {
+      return new Promise<void>((resolve, reject) => {
+        if (lang.buildCommand == null) {
+          buildedFilePath = codeFilePath;
+          resolve();
+          return;
+        }
+
+        buildedFilePath = pjoin(process.env.CODE_DIR as string, v.id);
+
+        let buildCMD = lang.buildCommand
+          .replace("$file", codeFilePath)
+          .replace("$output", buildedFilePath);
+
+        let cmdSplit = buildCMD.split(" ");
+
+        let execa_arga = cmdSplit[0];
+        let execa_argb = cmdSplit.slice(1);
+
+        let exec = execa(execa_arga, execa_argb);
+
+        let output = "";
+        let errput = "";
+        exec?.stdout?.on("data", (data: string) => {
+          output += data;
+        });
+
+        exec?.stderr?.on("data", (data: string) => {
+          errput += data;
+        });
+
+        exec.on("exit", () => {
+          resolve();
+        });
+      });
+    };
+
+    const judgeSub = (input: string, routput: string) => {
+      return new Promise<boolean>(async (resolve, reject) => {
+        let execCMD = lang.runCommand?.replace(
+          "$file",
+          buildedFilePath
+        ) as string;
+        let cmdSplit = execCMD.split(" ");
+        let execa_arga = cmdSplit[0];
+        let execa_argb = cmdSplit.slice(1);
+
+        let exec = execa(execa_arga, execa_argb);
+
+        let st: Date;
+        let ed: Date;
+        let right = true;
+
+        const maxRAMBytes = pro.maxMemoryMB * 1000000;
+
+        let output = "";
+        let errorput = "";
+        let ramlimited = false;
+        let ramInvi: any;
+
+        function ramMonitor() {
+          if (exec.killed) {
+            clearInterval(ramInvi);
+            return;
+          }
+          try {
+            pidusage(exec.pid as number)
+              .then((st) => {
+                maxRam = Math.max(maxRam, st.memory);
+                if (st.memory > maxRAMBytes) {
+                  exec.kill("SIGKILL");
+                  pidusage.clear();
+                  ramlimited = true;
+                }
+              })
+              .catch((err) => {
+                if (exec.killed) {
+                  clearInterval(ramInvi);
+                  return;
+                }
+              });
+          } catch {
+            clearInterval(ramInvi);
+            return;
+          }
+        }
+
+        exec.on("spawn", () => {
+          st = new Date();
+          exec.stdin?.write(input);
+        });
+
+        ramInvi = setInterval(ramMonitor, ramCheckCycle);
+
+        exec.stdout?.on("data", (data) => {
+          output += data.toString();
+        });
+
+        exec.stderr?.on("data", (data) => {
+          error = errorput;
+          clearInterval(ramInvi);
+          exec.kill("SIGKILL");
+        });
+
+        exec.on("exit", () => {
+          ed = new Date();
+          if (ramlimited) {
+            right = false;
+          } else if (errorput) {
+            right = false;
+          } else {
+            if (output.trim() != routput.trim()) {
+              right = false;
+            }
+          }
+          ntime = Math.max(ntime, ed.getTime() - st.getTime());
+
+          clearInterval(ramInvi);
+          resolve(right);
+        });
+      });
+    };
+
+    const run = () => {
+      return new Promise<JudgeResult>(async (resolve, reject) => {
+        let testCaseGroup = pro.testCase as Array<
+          Array<{ input: string; output: string } | number>
+        >;
+
+        for (let i = 0; i < testCaseGroup.length; i++) {
+          let testCases = testCaseGroup[i].slice(1);
+          let thisGroupScore = testCaseGroup[i][0] as number;
+
+          let rig = true;
+
+          for (let j = 0; j < testCases.length; j++) {
+            let testCase = testCases[j] as {
+              input: string;
+              output: string;
+            };
+            rig = (await judgeSub(testCase.input, testCase.output)) && rig;
+            if (!rig) break;
+          }
+
+          if (rig) {
+            scoreSum += thisGroupScore;
+          }
+        }
+
+        resolve({
+          error: error,
+          ram: maxRam,
+          score: scoreSum,
+          time: ntime,
+        });
+      });
+    };
+
     prisma.problem
       .findFirst({
         where: {
@@ -52,152 +225,31 @@ async function judge(v: SourceCode) {
       .then(async (p) => {
         if (p == null) return;
         if (p.testCase == null) return;
-        let lang = langs[v.type];
-        writeFile(
-          pjoin(process.env.CODE_DIR as string, v.id + "." + lang.fileExt),
-          v.code,
-          async (err) => {
-            let ptc = p.testCase as any;
-            let maxRam = 0;
-            let error: string | null = null;
-            let ntime = 0;
-            let scoreSum = 0;
-            for (
-              let i = 0;
-              i < ptc.length && (error == null || error == "");
-              i++
-            ) {
-              let x = ptc[i];
-              let score = parseInt(x[0]);
-              let inouts = x.slice(1) as { input: string; output: string }[];
-              let right = true;
-              for (
-                let j = 0;
-                j < inouts.length && right && (error == null || error == "");
-                j++
-              ) {
-                await (async function () {
-                  return new Promise<void>((resolve, reject) => {
-                    let st: Date;
-                    let ed: Date;
-                    let commandSplit = lang.runCommand
-                      ?.replace(
-                        "$file",
-                        pjoin(
-                          process.env.CODE_DIR as string,
-                          v.id + "." + v.type
-                        )
-                      )
-                      .split(" ");
-                    let exec = execa(
-                      (commandSplit as string[])[0] as string,
-                      commandSplit?.slice(1),
-                      {
-                        timeout: p.maxTime,
-                      }
-                    );
 
-                    const maxRAMBytes = p.maxMemoryMB * 1000000;
-
-                    let output = "";
-                    let errorput = "";
-                    let ramlimited = false;
-                    let ramInvi: any;
-
-                    function ramMonitor() {
-                      if (exec.killed) {
-                        clearInterval(ramInvi);
-                        return;
-                      }
-                      try {
-                        pidusage(exec.pid as number)
-                          .then((st) => {
-                            maxRam = Math.max(maxRam, st.memory);
-                            if (st.memory > maxRAMBytes) {
-                              exec.kill("SIGKILL");
-                              pidusage.clear();
-                              ramlimited = true;
-                            }
-                          })
-                          .catch((err) => {
-                            if (exec.killed) {
-                              clearInterval(ramInvi);
-                              return;
-                            }
-                          });
-                      } catch {
-                        clearInterval(ramInvi);
-                        return;
-                      }
-                    }
-
-                    exec.on("spawn", () => {
-                      st = new Date();
-                      exec.stdin?.write(inouts[j].input);
-                    });
-
-                    ramInvi = setInterval(ramMonitor, ramCheckCycle);
-
-                    exec.stdout?.on("data", (data) => {
-                      output += data.toString();
-                    });
-
-                    exec.stderr?.on("data", (data) => {
-                      error = errorput;
-                      clearInterval(ramInvi);
-                      exec.kill("SIGKILL");
-                    });
-
-                    exec.on("exit", () => {
-                      ed = new Date();
-                      if (ramlimited) {
-                        right = false;
-                      } else if (errorput) {
-                        right = false;
-                      } else {
-                        if (output.trim() != inouts[j].output.trim()) {
-                          right = false;
-                        }
-                      }
-                      ntime = Math.max(ntime, ed.getTime() - st.getTime());
-
-                      clearInterval(ramInvi);
-                      resolve();
-                    });
-                  });
-                })();
-              }
-
-              if (right) {
-                scoreSum += score;
-              }
-            }
-
-            resolve({
-              score: scoreSum,
-              ram: maxRam,
-              error: error,
-              time: ntime,
-            });
-          }
+        lang = langs[v.type];
+        pro = p;
+        codeFilePath = pjoin(
+          process.env.CODE_DIR as string,
+          v.id + "." + lang.fileExt
         );
+
+        writeFile(codeFilePath, v.code, async (err) => {
+          await build();
+
+          let result = await run();
+          resolve(result);
+        });
       });
   });
 }
 
-function QCLog() {
-  console.log(`Q ${queue.length} , C ${childs}`);
-}
-
 function queueing() {
-  if (childs > maxChildsCount) return;
+  if (childs > maxChildsCount || queue.length == 0) return;
 
   let qf = queue[0];
   queue.shift();
 
   childs++;
-
-  QCLog();
 
   prisma.sourceCode
     .findUnique({
@@ -223,7 +275,7 @@ function queueing() {
           })
           .then(() => {
             childs--;
-            QCLog();
+            queueing();
           });
       };
 
@@ -231,11 +283,12 @@ function queueing() {
       judge(v).then((v) => {
         jresult = v;
         updateDB_Result();
+        console.log("Judge Done!");
       });
     });
 }
 
-app.get("/judge", (req, res) => {
+app.post("/judge", (req, res) => {
   queue.push(req.query.id as string);
   if (childs <= maxChildsCount) queueing();
   res.send(req.query.id);
