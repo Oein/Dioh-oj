@@ -1,9 +1,10 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import MyHead from "../../components/head";
+import MyHead from "../../../components/head";
 import axios from "axios";
-import { Grid, Image, Table, Tooltip } from "@nextui-org/react";
+import { Grid, Image, Table } from "@nextui-org/react";
 
+// Markdown
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
