@@ -33,7 +33,6 @@ export default function MyHead() {
   return (
     <div
       style={{
-        color: `${theme?.colors.green500}`,
         position: "fixed",
         top: "0px",
         left: "0px",
@@ -41,7 +40,9 @@ export default function MyHead() {
         height: "76px",
         padding: "7px",
         paddingTop: "0px",
-        borderBottom: `1px solid ${theme?.colors.neutralBorder}`,
+        borderBottom: `1px solid ${theme?.colors.neutralBorder.value}`,
+        background: `${theme?.colors.background.value}`,
+        zIndex: "12345",
       }}
       className="container"
     >
