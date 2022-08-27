@@ -4,6 +4,8 @@ import { NextUIProvider } from "@nextui-org/react";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { createTheme } from "@nextui-org/react";
 import { SessionProvider } from "next-auth/react";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import NoSSR from "react-no-ssr";
 import Head from "next/head";
 
@@ -40,6 +42,17 @@ function MyApp({ Component, pageProps }: AppProps) {
                 padding: "5px",
               }}
             >
+              <ToastContainer
+                position="bottom-left"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss={false}
+                draggable
+                pauseOnHover
+              />
               <Head>
                 <meta
                   name="viewport"
