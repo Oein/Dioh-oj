@@ -13,8 +13,9 @@ import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import docco from "react-syntax-highlighter/dist/cjs/styles/hljs/docco";
-import { toast } from "react-toastify";
 import { HeadingComponent } from "react-markdown/lib/ast-to-react";
+
+import { toast } from "react-toastify";
 
 import {
   AiOutlineClockCircle as Time,
