@@ -1,4 +1,4 @@
-import { Pagination, Table, Text } from "@nextui-org/react";
+import { Pagination, Table, Text, Grid, Image } from "@nextui-org/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -45,9 +45,26 @@ export default function Problems() {
     <>
       <MyHead />
       <article className="container">
-        <Text size="xx-large" className="font">
-          {parseInt(pageIdx as string) + 1}번째 페이지
-        </Text>
+        <Grid.Container>
+          <Grid>
+            <Image
+              showSkeleton
+              width={"2em"}
+              objectFit="contain"
+              className="centerH"
+              src="../../images/chart.svg"
+              alt="Dina의 이미지"
+              style={{
+                cursor: "pointer",
+              }}
+            />
+          </Grid>
+          <Grid>
+            <Text size="xx-large" className="font centerH">
+              {parseInt(pageIdx as string) + 1}번째 페이지
+            </Text>
+          </Grid>
+        </Grid.Container>
         <Table>
           <Table.Header>
             <Table.Column>문제 번호</Table.Column>
