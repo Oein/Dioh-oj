@@ -45,6 +45,7 @@ export default NextAuth({
     session: async ({ session, token }) => {
       if (session?.user) {
         session.user.id = token.uid;
+        session.user.permission = token.permission;
       }
 
       return session;
@@ -52,6 +53,12 @@ export default NextAuth({
     jwt: async ({ user, token }) => {
       if (user) {
         token.uid = user.id;
+        let x = await prisma.user.findFirst({
+          where: {
+            id: user.id,
+          },
+        });
+        token.permission = x?.permission as string[];
       }
 
       return token;
