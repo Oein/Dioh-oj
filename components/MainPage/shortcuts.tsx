@@ -61,6 +61,34 @@ export default function ShortCuts() {
             </Link>
           </Grid>
         </Grid.Container>
+        <Grid.Container>
+          <Grid>
+            <Image
+              showSkeleton
+              width={"2em"}
+              objectFit="contain"
+              src="../../images/shop.svg"
+              alt="Dina의 이미지"
+              style={{
+                cursor: "pointer",
+              }}
+            />
+          </Grid>
+          <Grid>
+            <Link href="https://www.coupang.com/">
+              <div
+                style={{
+                  color: "var(--nextui-colors-text)",
+                  fontSize: "var(--nextui-fontSizes-xl)",
+                  cursor: "pointer",
+                }}
+                className="font centerH"
+              >
+                상점
+              </div>
+            </Link>
+          </Grid>
+        </Grid.Container>
       </div>
     </>
   );
