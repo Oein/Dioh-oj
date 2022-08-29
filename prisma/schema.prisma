@@ -20,6 +20,7 @@ model SourceCode {
   usedMemory String?
   error String?
   user String
+  score Int
 }
 
 model Problem {
