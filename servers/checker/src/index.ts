@@ -259,7 +259,12 @@ async function judge(v: SourceCode) {
             score: 0,
             time: 2147483647,
           };
-          if (builded) result = await run();
+          if (builded == "") {
+            result = await run();
+            console.log("Judge Done!");
+          } else {
+            console.log("Judge Done with error.");
+          }
           resolve(result);
         });
       });
@@ -307,7 +312,6 @@ function queueing() {
       judge(v).then((v) => {
         jresult = v;
         updateDB_Result();
-        console.log("Judge Done!");
       });
     });
 }
