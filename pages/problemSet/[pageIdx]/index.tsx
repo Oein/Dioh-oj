@@ -91,6 +91,12 @@ export default function Problems() {
         </Table>
         <Pagination
           total={pageCount}
+          style={{
+            alignSelf: "center",
+            left: "50%",
+            transform: "translateX(-50%)",
+            marginTop: "5px",
+          }}
           initialPage={parseInt(pageIdx as string) + 1}
           onChange={(v) => {
             let dt = Math.floor(v) - 1;
@@ -98,6 +104,7 @@ export default function Problems() {
               router.push(`/problemSet/0`);
               return;
             }
+            dt = Math.max(dt, 0);
             router.push(`/problemSet/${dt}`);
           }}
         />
