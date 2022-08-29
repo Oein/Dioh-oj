@@ -59,10 +59,10 @@ async function judge(v: SourceCode) {
     let scoreSum = 0;
 
     const build = () => {
-      return new Promise<void>((resolve, reject) => {
+      return new Promise<string>((resolve, reject) => {
         if (lang.buildCommand == null) {
           buildedFilePath = codeFilePath;
-          resolve();
+          resolve("");
           return;
         }
 
@@ -71,6 +71,8 @@ async function judge(v: SourceCode) {
         let buildCMD = lang.buildCommand
           .replace("$file", codeFilePath)
           .replace("$output", buildedFilePath);
+
+        console.log("Build command: " + buildCMD);
 
         let cmdSplit = buildCMD.split(" ");
 
@@ -90,7 +92,7 @@ async function judge(v: SourceCode) {
         });
 
         exec.on("exit", () => {
-          resolve();
+          resolve(errput);
         });
       });
     };
@@ -249,9 +251,15 @@ async function judge(v: SourceCode) {
         );
 
         writeFile(codeFilePath, v.code, async (err) => {
-          await build();
+          let builded = await build();
 
-          let result = await run();
+          let result: JudgeResult = {
+            error: builded,
+            ram: 2147483647,
+            score: 0,
+            time: 2147483647,
+          };
+          if (builded) result = await run();
           resolve(result);
         });
       });
