@@ -118,6 +118,8 @@ async function judge(v: SourceCode) {
         let ramlimited = false;
         let ramInvi: any;
 
+        let tx = 0;
+
         function ramMonitor() {
           if (exec.killed) {
             clearInterval(ramInvi);
@@ -143,6 +145,14 @@ async function judge(v: SourceCode) {
             clearInterval(ramInvi);
             return;
           }
+
+          tx += ramCheckCycle;
+
+          if (tx > pro.maxTime) {
+            error = "Timeout";
+            clearInterval(ramInvi);
+            exec.kill("SIGKILL");
+          }
         }
 
         exec.on("spawn", () => {
@@ -164,6 +174,8 @@ async function judge(v: SourceCode) {
 
         exec.on("exit", () => {
           ed = new Date();
+          ntime = Math.max(ntime, ed.getTime() - st.getTime());
+
           if (ramlimited) {
             right = false;
           } else if (errorput) {
@@ -173,7 +185,10 @@ async function judge(v: SourceCode) {
               right = false;
             }
           }
-          ntime = Math.max(ntime, ed.getTime() - st.getTime());
+
+          if (ntime > pro.maxTime && (error == "" || error == null)) {
+            error = "Timeout";
+          }
 
           clearInterval(ramInvi);
           resolve(right);
