@@ -23,7 +23,6 @@ export default function Problems() {
     axios
       .get(`/api/problems/get/page/${pageIdx as string}`)
       .then((v) => {
-        console.log(v.data);
         setProblems(v.data);
       })
       .catch((err) => {

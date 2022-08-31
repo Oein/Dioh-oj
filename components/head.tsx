@@ -52,7 +52,6 @@ export default function MyHead() {
   useEffect(() => {
     if (status != "authenticated") return;
     axios.get(`/api/user/get/token/${session.user?.id}`).then((v) => {
-      console.log(v.data);
       setUserName(v.data.nickName);
     });
   }, [session?.user?.id, status]);

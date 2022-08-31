@@ -88,9 +88,7 @@ export default NextAuth({
         .then(() => {
           Promise.resolve();
         })
-        .catch(() => {
-          console.log("ERR");
-        });
+        .catch(() => {});
     },
   },
 });

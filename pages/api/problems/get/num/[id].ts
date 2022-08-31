@@ -4,7 +4,6 @@ const prisma = new PrismaClient();
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const { id } = req.query;
-  console.log(id);
   return new Promise<void>((resolve, reject) => {
     prisma.problem
       .findFirst({

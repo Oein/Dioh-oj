@@ -17,7 +17,6 @@ const SignIn = ({
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const { data: session } = useSession();
   const router = useRouter();
-  console.log(providers);
 
   useEffect(() => {
     if (session) {

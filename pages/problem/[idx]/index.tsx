@@ -40,17 +40,13 @@ export default function ProblemPage() {
   useEffect(() => {
     if (!router.isReady) return;
     let query = router.query;
-    console.log(`Find ${query.idx as string}`);
     axios.get(`/api/problems/get/num/${query.idx as string}`).then((res) => {
       let problem = res.data;
 
       if (problem.err) {
         setProblemName("Problem Not Found");
-        console.log("ERR");
         return;
       }
-
-      console.log(problem);
 
       setProblemName(`${problem.id} : ${problem.name}`);
       setProblemMemory(problem.maxMemoryMB + "MB");

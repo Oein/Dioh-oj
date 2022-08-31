@@ -385,9 +385,7 @@ export default function AdminPannel() {
           isCompact
           isBordered
           variant="sticky"
-          onScrollPositionChange={(num) => {
-            console.log(num);
-          }}
+          onScrollPositionChange={(num) => {}}
         >
           <Navbar.Brand>
             <Text size="$3xl">Dioh Admin Pannel</Text>
