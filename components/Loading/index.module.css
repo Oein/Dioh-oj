@@ -1,0 +1,45 @@
+.moveArrow {
+  animation-iteration-count: infinite;
+  animation-duration: 1s;
+  animation-name: mymove;
+  width: 8px;
+  height: 16px;
+  border-radius: 8px;
+  position: absolute;
+  transition: 0.1s;
+}
+
+@keyframes mymove {
+  0% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(20px);
+  }
+  100% {
+    transform: translateY(0px) rotate(180deg);
+  }
+}
+
+.loadP > span:nth-child(1) {
+  left: -30px;
+  background-color: red;
+}
+
+.loadP > span:nth-child(2) {
+  left: -10px;
+  animation-delay: calc(0.4s / 4);
+  background-color: green;
+}
+
+.loadP > span:nth-child(3) {
+  left: 10px;
+  animation-delay: calc(0.4s / 4 * 2);
+  background-color: blue;
+}
+
+.loadP > span:nth-child(4) {
+  left: 30px;
+  animation-delay: calc(0.4s / 4 * 3);
+  background-color: yellow;
+}
