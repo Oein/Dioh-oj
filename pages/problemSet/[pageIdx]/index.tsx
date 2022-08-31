@@ -74,14 +74,34 @@ export default function Problems() {
               return (
                 <Table.Row key={idx}>
                   <Table.Cell>
-                    <Link href={`/problem/${v.id}`}>
+                    {v.id == "Loading..." ? (
                       <div>{v.id}</div>
-                    </Link>
+                    ) : (
+                      <Link href={`/problem/${v.id}`}>
+                        <div>{v.id}</div>
+                      </Link>
+                    )}
                   </Table.Cell>
                   <Table.Cell>
-                    <Link href={`/problem/${v.id}`}>
-                      <div>{v.name}</div>
-                    </Link>
+                    {v.name == "Loading..." ? (
+                      <div
+                        style={{
+                          cursor: "pointer",
+                        }}
+                      >
+                        {v.name}
+                      </div>
+                    ) : (
+                      <Link href={`/problem/${v.id}`}>
+                        <div
+                          style={{
+                            cursor: "pointer",
+                          }}
+                        >
+                          {v.name}
+                        </div>
+                      </Link>
+                    )}
                   </Table.Cell>
                 </Table.Row>
               );
