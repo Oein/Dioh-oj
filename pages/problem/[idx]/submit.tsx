@@ -8,6 +8,7 @@ import { Button, Grid, Image, Link, Spacer } from "@nextui-org/react";
 import Editor from "@monaco-editor/react";
 import Select from "react-select";
 import { toast } from "react-toastify";
+import Load from "../../../components/Loading";
 
 const options = [
   { value: "cpp", label: "CPP" },
@@ -18,23 +19,21 @@ export default function ProblemPage() {
   let router = useRouter();
   let { query } = router;
   let [problemName, setProblemName] = useState("Loading... / 제출");
+  let [sourceCode, setSourceCode] = useState("");
+  let [loadingT, load] = useState(false);
   const [selectedOption, setSelectedOption] = useState(options[0]);
 
   // 1번만 실행
   useEffect(() => {
     if (!router.isReady) return;
     let query = router.query;
-    console.log(`Find ${query.idx as string}`);
     axios.get(`/api/problems/get/num/${query.idx as string}`).then((res) => {
       let problem = res.data;
 
       if (problem.err) {
         setProblemName("Problem Not Found");
-        console.log("ERR");
         return;
       }
-
-      console.log(problem);
 
       setProblemName(`${problem.id} : ${problem.name} / 제출`);
     });
@@ -43,6 +42,8 @@ export default function ProblemPage() {
   return (
     <article className="container">
       <MyHead />
+
+      {loadingT ? <Load /> : null}
 
       {/* Option Menu */}
       <Grid.Container>
@@ -116,7 +117,6 @@ export default function ProblemPage() {
           defaultValue={selectedOption}
           onChange={(e: any) => {
             setSelectedOption(e);
-            console.log(e);
           }}
         />
       </div>
@@ -135,7 +135,10 @@ export default function ProblemPage() {
         <Editor
           height="40vh"
           language={selectedOption.label.toLocaleLowerCase()}
-          defaultValue=""
+          defaultValue={sourceCode}
+          onChange={(v) => {
+            setSourceCode(v || "");
+          }}
           theme="vs-dark"
         />
       </div>
@@ -154,9 +157,41 @@ export default function ProblemPage() {
             top: "5px",
           }}
           onPress={() => {
-            toast("T.T Submit doesn't support now.", {
-              type: "info",
-            });
+            if (sourceCode == "") {
+              toast("Source Code cannot be blank", {
+                type: "warning",
+              });
+              return;
+            }
+            if (problemName == "Problem Not Found") {
+              toast("Problem Not Found", {
+                type: "error",
+              });
+              return;
+            }
+            if (problemName == "Loading... / 제출") {
+              toast("Problem is loading...", {
+                type: "warning",
+              });
+              return;
+            }
+            axios
+              .get("/api/problems/submit", {
+                params: {
+                  type: selectedOption.value,
+                  body: sourceCode,
+                  problem: query.idx || "",
+                },
+              })
+              .then((v) => {
+                load(false);
+              })
+              .catch((err) => {
+                toast(`Error occured / ${err.message}`, {
+                  type: "error",
+                });
+              });
+            load(true);
           }}
         >
           제출
