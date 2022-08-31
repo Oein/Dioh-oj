@@ -34,6 +34,7 @@
     "rehype-katex": "^6.0.2",
     "remark-gfm": "^3.0.1",
     "remark-math": "^5.1.1",
+    "uid": "^2.0.0",
     "worker-loader": "^3.0.8"
   },
   "devDependencies": {
