@@ -9,6 +9,9 @@ import Editor from "@monaco-editor/react";
 import Select from "react-select";
 import { toast } from "react-toastify";
 import Load from "../../../components/Loading";
+import { useSession } from "next-auth/react";
+
+import customAxios from "../../../module/customAxios";
 
 const options = [
   { value: "cpp", label: "CPP" },
@@ -17,15 +20,31 @@ const options = [
 
 export default function ProblemPage() {
   let router = useRouter();
+  let session = useSession();
   let { query } = router;
   let [problemName, setProblemName] = useState("Loading... / 제출");
   let [sourceCode, setSourceCode] = useState("");
-  let [loadingT, load] = useState(false);
+  let [loadingT, load] = useState(true);
   const [selectedOption, setSelectedOption] = useState(options[0]);
 
   // 1번만 실행
   useEffect(() => {
     if (!router.isReady) return;
+
+    if (session.status == "unauthenticated") {
+      toast("You are not signed in.", {
+        type: "info",
+      });
+      router.push("/auth/signin");
+      return;
+    }
+
+    if (session.status == "loading") {
+      return;
+    }
+
+    load(false);
+
     let query = router.query;
     axios.get(`/api/problems/get/num/${query.idx as string}`).then((res) => {
       let problem = res.data;
@@ -37,7 +56,7 @@ export default function ProblemPage() {
 
       setProblemName(`${problem.id} : ${problem.name} / 제출`);
     });
-  }, [router.isReady, router.query]);
+  }, [router, router.isReady, router.query, session.status]);
 
   return (
     <article className="container">
@@ -175,7 +194,7 @@ export default function ProblemPage() {
               });
               return;
             }
-            axios
+            customAxios
               .get("/api/problems/submit", {
                 params: {
                   type: selectedOption.value,
@@ -185,6 +204,21 @@ export default function ProblemPage() {
               })
               .then((v) => {
                 load(false);
+
+                if (v.data.err) {
+                  toast(v.data.err, {
+                    type: "error",
+                  });
+                }
+
+                if (v.data.suc) {
+                  toast(v.data.suc, {
+                    type: "success",
+                  });
+                  router.push(`/problem/${query.idx}`);
+                }
+
+                console.log(v.data);
               })
               .catch((err) => {
                 toast(`Error occured / ${err.message}`, {
