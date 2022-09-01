@@ -3,7 +3,6 @@ import { PrismaClient } from "@prisma/client";
 import { uid } from "uid";
 const prisma = new PrismaClient();
 import axios from "axios";
-import { getToken } from "next-auth/jwt";
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   return new Promise<void>(async (resolve, reject) => {
