@@ -176,21 +176,139 @@ let pages: SubPage[] = [
             &nbsp;
           </p>
           <Text size="$xl">TestCase</Text>
-          <Editor
-            theme="vs-dark"
-            language="json"
-            height="500px"
-            defaultValue={`[
+          <Grid.Container>
+            <Grid xs={6}>
+              <Editor
+                theme="vs-dark"
+                language="json"
+                height="500px"
+                defaultValue={`[
   [
     
   ]
 ]
 `}
-            value={prop.monaco}
-            onChange={(e) => {
-              prop.setMonaco(e || "");
-            }}
-          />
+                value={prop.monaco}
+                onChange={(e) => {
+                  prop.setMonaco(e || "");
+                }}
+              />
+            </Grid>
+            <Grid xs={6}>
+              <div
+                style={{
+                  padding: "3px",
+                  height: "500px",
+                  overflow: "auto",
+                  width: "100%",
+                }}
+              >
+                {(() => {
+                  try {
+                    return (
+                      <>
+                        {(
+                          JSON.parse(`{ "a" : ${prop.monaco} }`)["a"] as (
+                            | { input: string; output: string }
+                            | number
+                          )[][]
+                        ).map((v, idx) => {
+                          return (
+                            <>
+                              <details>
+                                <summary>
+                                  <h3>
+                                    <>
+                                      Test case {idx + 1} / Score : {v[0]}
+                                    </>
+                                  </h3>
+                                </summary>
+                                <div
+                                  style={{
+                                    paddingLeft: "5px",
+                                  }}
+                                >
+                                  {v.map((b, idxb) => {
+                                    if (typeof b == "number") {
+                                      if (idxb == 0) {
+                                        return null;
+                                      }
+                                      throw new Error(`Test case must be like this 
+[
+  [
+    score,
+    {
+      "input": "[Input]",
+      "output": "[Output]",
+    },
+    {
+      "input": "[Input]",
+      "output": "[Output]",
+    }
+  ],
+  [
+    score,
+    {
+      "input": "[Input]",
+      "output": "[Output]",
+    },
+    {
+      "input": "[Input]",
+      "output": "[Output]",
+    }
+  ]
+]`);
+                                    }
+
+                                    return (
+                                      <>
+                                        <details>
+                                          <summary>
+                                            {" "}
+                                            - Sub test case {idxb}
+                                          </summary>
+                                          <details>
+                                            <summary>input</summary>
+                                            <pre>
+                                              <code>{b.input}</code>
+                                            </pre>
+                                          </details>
+                                          <details>
+                                            <summary>output</summary>
+                                            <pre>
+                                              <code>{b.output}</code>
+                                            </pre>
+                                          </details>
+                                        </details>
+                                      </>
+                                    );
+                                  })}
+                                </div>
+                              </details>
+                            </>
+                          );
+                        })}
+                      </>
+                    );
+                  } catch (e) {
+                    return (
+                      <>
+                        <h2>Error was found in your json.</h2>
+                        <div>
+                          {((e as any).message as string)
+                            .replace(/ /g, "\u00A0\u00A0")
+                            .split("\n")
+                            .map((a, b) => {
+                              return <p key={b}>{a}</p>;
+                            })}
+                        </div>
+                      </>
+                    );
+                  }
+                })()}
+              </div>
+            </Grid>
+          </Grid.Container>
 
           {/* Problem Body */}
           <p
@@ -218,6 +336,9 @@ let pages: SubPage[] = [
               <div
                 style={{
                   margin: "5px",
+                  height: "500px",
+                  overflow: "auto",
+                  width: "100%",
                 }}
               >
                 <ReactMarkdown
@@ -326,6 +447,26 @@ let pages: SubPage[] = [
           `}</style>
 
           <style>{`
+details {
+  border: 1px solid #aaa;
+  border-radius: 4px;
+  padding: .5em .5em 0;
+  background: var(--nextui-colors-background);
+}
+
+summary {
+  font-weight: bold;
+  margin: -.5em -.5em 0;
+  padding: .5em;
+}
+
+details[open] {
+  padding: .5em;
+}
+
+`}</style>
+
+          <style>{`
             .rotateOnHover {
               transition: all 1s ease;
             }
@@ -349,7 +490,11 @@ export default function AdminPannel() {
   let [point, setPoint] = useState(1);
   let [time, setTime] = useState(1000);
   let [name, setName] = useState("");
-  let [monaco, setMonaco] = useState("");
+  let [monaco, setMonaco] = useState(`[
+  [
+      
+  ]
+]`);
   let [monaco2, setMonaco2] = useState("");
   let [body, setBody] = useState("## 문제\n\n## 입력\n\n## 출력\n");
 
