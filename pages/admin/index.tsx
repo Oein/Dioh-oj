@@ -447,32 +447,29 @@ let pages: SubPage[] = [
           `}</style>
 
           <style>{`
-details {
-  border: 1px solid #aaa;
-  border-radius: 4px;
-  padding: .5em .5em 0;
-  background: var(--nextui-colors-background);
-}
-
-summary {
-  font-weight: bold;
-  margin: -.5em -.5em 0;
-  padding: .5em;
-}
-
-details[open] {
-  padding: .5em;
-}
-
-`}</style>
-
-          <style>{`
             .rotateOnHover {
               transition: all 1s ease;
             }
 
             .rotateOnHover:hover {
               transform: translateY(-50%) rotate(360deg);
+            }
+
+            details {
+              border: 1px solid #aaa;
+              border-radius: 4px;
+              padding: .5em .5em 0;
+              background: var(--nextui-colors-background);
+            }
+            
+            summary {
+              font-weight: bold;
+              margin: -.5em -.5em 0;
+              padding: .5em;
+            }
+            
+            details[open] {
+              padding: .5em;
             }
         `}</style>
         </article>
