@@ -10,6 +10,7 @@ export default function MyHead() {
   let { theme } = useTheme();
   const { data: session, status } = useSession();
   let [userName, setUserName] = useState("Loading...");
+  let [isAdmin, setIsAdmin] = useState(false);
 
   const lpad = function (padString: string, length: number) {
     var str = padString;
@@ -53,6 +54,9 @@ export default function MyHead() {
     if (status != "authenticated") return;
     axios.get(`/api/user/get/token/${session.user?.id}`).then((v) => {
       setUserName(v.data.nickName);
+      if ((v.data.permission as string[]).includes("admin")) {
+        setIsAdmin(true);
+      }
     });
   }, [session?.user?.id, status]);
 
@@ -97,7 +101,34 @@ export default function MyHead() {
           ) : (
             <>
               <Grid.Container>
+                {/* Go to Admin Dashboard */}
+                {isAdmin ? (
+                  <Grid>
+                    <Link href="/admin">
+                      <div
+                        style={{
+                          display: "inline-block",
+                          fontSize: "var(--nextui-fontSizes-md)",
+                          cursor: "pointer",
+                        }}
+                        className="centerH"
+                      >
+                        Dashboard
+                      </div>
+                    </Link>
+                  </Grid>
+                ) : null}
+                {isAdmin ? (
+                  <Grid>
+                    <div
+                      style={{
+                        width: "8px",
+                      }}
+                    ></div>
+                  </Grid>
+                ) : null}
                 {/* Profile Image */}
+
                 <Grid>
                   {status == "authenticated" ? (
                     <Image
@@ -123,7 +154,6 @@ export default function MyHead() {
                     }}
                   ></div>
                 </Grid>
-                {/* Sign In & Out */}
                 <Grid>
                   {status == "authenticated" ? (
                     <div
@@ -137,6 +167,7 @@ export default function MyHead() {
                     </div>
                   ) : null}
                 </Grid>
+                {/* Sign In & Out */}
                 <Grid>
                   <div
                     style={{
