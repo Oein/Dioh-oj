@@ -16,6 +16,7 @@ import customAxios from "../../../module/customAxios";
 const options = [
   { value: "cpp", label: "CPP" },
   { value: "js", label: "JavaScript" },
+  { value: "py", label: "Python" },
 ];
 
 export default function ProblemPage() {

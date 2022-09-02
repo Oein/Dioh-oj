@@ -44,6 +44,11 @@ let langs: { [key: string]: Language } = {
     buildCommand: "g++ -o $output $file",
     runCommand: "$file",
   },
+  py: {
+    fileExt: "py",
+    buildCommand: null,
+    runCommand: "python3 $file",
+  },
 };
 
 async function judge(v: SourceCode) {
