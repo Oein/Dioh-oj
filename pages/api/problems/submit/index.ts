@@ -6,16 +6,6 @@ import axios from "axios";
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   return new Promise<void>(async (resolve, reject) => {
-    if (process.env.NODE_ENV == "production") {
-      res.send(
-        JSON.stringify({
-          err: "Submit function is not supported on release version",
-        })
-      );
-      resolve();
-      return;
-    }
-
     let query = req.query;
     let uToken = req.headers.authorization as string;
     if (uToken == "") {
