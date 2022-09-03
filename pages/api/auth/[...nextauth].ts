@@ -3,9 +3,7 @@ import GithubProvider from "next-auth/providers/github";
 import NaverProvider from "next-auth/providers/naver";
 import DiscordProvider from "next-auth/providers/discord";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { prisma } from "../../../util/prisma";
 
 const lpad = function (padString: string, length: number) {
   var str = padString;

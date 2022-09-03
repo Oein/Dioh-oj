@@ -1,6 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { PrismaClient } from "@prisma/client";
-const prisma = new PrismaClient();
+import { prisma } from "../../../../../../util/prisma";
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const { token } = req.query;

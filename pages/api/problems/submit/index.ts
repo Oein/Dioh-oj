@@ -1,7 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../../../../util/prisma";
 import { uid } from "uid";
-const prisma = new PrismaClient();
 import axios from "axios";
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
