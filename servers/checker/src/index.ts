@@ -51,7 +51,7 @@ let langs: { [key: string]: Language } = {
   },
 };
 
-async function judge(v: SourceCode) {
+async function judge(v: SourceCode, sourcode: string) {
   return new Promise<JudgeResult>((resolve, reject) => {
     let pro: Problem;
     let lang: Language;
@@ -255,7 +255,7 @@ async function judge(v: SourceCode) {
           v.id + "." + lang.fileExt
         );
 
-        writeFile(codeFilePath, v.code, async (err) => {
+        writeFile(codeFilePath, sourcode, async (err) => {
           let builded = await build();
 
           let result: JudgeResult = {
@@ -284,40 +284,49 @@ function queueing() {
 
   childs++;
 
-  prisma.sourceCode
+  prisma.submittedCode
     .findUnique({
       where: {
         id: qf,
       },
     })
-    .then(async (v) => {
-      if (v == null) return;
-      let jresult: JudgeResult;
+    .then((code) => {
+      if (code == null) return;
+      prisma.sourceCode
+        .findUnique({
+          where: {
+            id: qf,
+          },
+        })
+        .then(async (v) => {
+          if (v == null) return;
+          let jresult: JudgeResult;
 
-      const updateDB_Result = async () => {
-        prisma.sourceCode
-          .update({
-            where: {
-              id: qf,
-            },
-            data: {
-              usedMemory: jresult.ram.toString(),
-              usedTime: jresult.time.toString(),
-              error: (jresult.error || "").toString(),
-              score: jresult.score || 0,
-            },
-          })
-          .then(() => {
-            childs--;
-            queueing();
+          const updateDB_Result = async () => {
+            prisma.sourceCode
+              .update({
+                where: {
+                  id: qf,
+                },
+                data: {
+                  usedMemory: jresult.ram.toString(),
+                  usedTime: jresult.time.toString(),
+                  error: (jresult.error || "").toString(),
+                  score: jresult.score || 0,
+                },
+              })
+              .then(() => {
+                childs--;
+                queueing();
+              });
+          };
+
+          // Judge
+          judge(v, code.code).then((v) => {
+            jresult = v;
+            updateDB_Result();
           });
-      };
-
-      // Judge
-      judge(v).then((v) => {
-        jresult = v;
-        updateDB_Result();
-      });
+        });
     });
 }
 

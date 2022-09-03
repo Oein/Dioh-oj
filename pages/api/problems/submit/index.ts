@@ -102,35 +102,55 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 
         let uidX = uid();
 
-        prisma.sourceCode
+        prisma.submittedCode
           .create({
             data: {
               id: uidX,
               code: body,
-              score: 0,
-              type: type,
-              user: uToken,
-              problem: problem,
             },
           })
           .then((v) => {
-            axios
-              .post(
-                (process.env.JUDGE_SPREADER_URL as string).replace("_id_", uidX)
-              )
+            prisma.sourceCode
+              .create({
+                data: {
+                  id: uidX,
+                  score: 0,
+                  type: type,
+                  user: uToken,
+                  problem: problem,
+                },
+              })
               .then((v) => {
-                res.send(
-                  JSON.stringify({
-                    suc: `Successfully requested your judge.`,
+                axios
+                  .post(
+                    (process.env.JUDGE_SPREADER_URL as string).replace(
+                      "_id_",
+                      uidX
+                    )
+                  )
+                  .then((v) => {
+                    res.send(
+                      JSON.stringify({
+                        suc: `Successfully requested your judge.`,
+                      })
+                    );
+                    console.log(
+                      `Requested ${uidX} ${uToken} ${(
+                        process.env.JUDGE_SPREADER_URL as string
+                      ).replace("_id_", uidX)}`
+                    );
+                    resolve();
+                    return;
                   })
-                );
-                console.log(
-                  `Requested ${uidX} ${uToken} ${(
-                    process.env.JUDGE_SPREADER_URL as string
-                  ).replace("_id_", uidX)}`
-                );
-                resolve();
-                return;
+                  .catch((err) => {
+                    res.send(
+                      JSON.stringify({
+                        err: `Err / ${err}`,
+                      })
+                    );
+                    resolve();
+                    return;
+                  });
               })
               .catch((err) => {
                 res.send(
