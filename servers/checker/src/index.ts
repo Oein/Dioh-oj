@@ -303,21 +303,42 @@ function queueing() {
           let jresult: JudgeResult;
 
           const updateDB_Result = async () => {
-            prisma.sourceCode
-              .update({
+            prisma.user
+              .findFirst({
                 where: {
-                  id: qf,
-                },
-                data: {
-                  usedMemory: jresult.ram.toString(),
-                  usedTime: jresult.time.toString(),
-                  error: (jresult.error || "").toString(),
-                  score: jresult.score || 0,
+                  id: v.user,
                 },
               })
-              .then(() => {
-                childs--;
-                queueing();
+              .then(async (y) => {
+                if (y == null) return;
+                if (!y.solvedProblems.includes(v.problem)) {
+                  y.solvedProblems.push(v.problem);
+                  await prisma.user.update({
+                    where: {
+                      id: v.user,
+                    },
+                    data: {
+                      solvedProblems: y.solvedProblems,
+                    },
+                  });
+                }
+
+                prisma.sourceCode
+                  .update({
+                    where: {
+                      id: qf,
+                    },
+                    data: {
+                      usedMemory: jresult.ram.toString(),
+                      usedTime: jresult.time.toString(),
+                      error: (jresult.error || "").toString(),
+                      score: jresult.score || 0,
+                    },
+                  })
+                  .then(() => {
+                    childs--;
+                    queueing();
+                  });
               });
           };
 
