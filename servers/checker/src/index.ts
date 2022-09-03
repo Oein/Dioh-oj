@@ -35,7 +35,7 @@ interface Language {
 
 let langs: { [key: string]: Language } = {
   js: {
-    fileExt: "js",
+    fileExt: "cjs",
     buildCommand: null,
     runCommand: "node $file",
   },
