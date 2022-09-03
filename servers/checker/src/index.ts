@@ -312,15 +312,25 @@ function queueing() {
               .then(async (y) => {
                 if (y == null) return;
                 if (!y.solvedProblems.includes(v.problem)) {
-                  y.solvedProblems.push(v.problem);
-                  await prisma.user.update({
-                    where: {
-                      id: v.user,
-                    },
-                    data: {
-                      solvedProblems: y.solvedProblems,
-                    },
-                  });
+                  prisma.problem
+                    .findFirst({
+                      where: {
+                        id: v.problem,
+                      },
+                    })
+                    .then(async (p) => {
+                      if (p == null) return;
+                      y.solvedProblems.push(v.problem);
+                      await prisma.user.update({
+                        where: {
+                          id: v.user,
+                        },
+                        data: {
+                          solvedProblems: y.solvedProblems,
+                          havingPoint: y.havingPoint + p.point,
+                        },
+                      });
+                    });
                 }
 
                 prisma.sourceCode
