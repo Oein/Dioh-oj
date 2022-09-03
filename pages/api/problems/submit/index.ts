@@ -108,7 +108,15 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
               code: body,
             },
           })
-          .then((v) => {
+          .then((y) => {
+            prisma.problem.update({
+              where: {
+                id: problem,
+              },
+              data: {
+                solveRequestedCount: v.solveRequestedCount + 1,
+              },
+            });
             prisma.sourceCode
               .create({
                 data: {
