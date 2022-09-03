@@ -14,13 +14,17 @@ model SourceCode {
   id String @id
   time DateTime @default(now())
   type String
-  code String
   problem String
   usedTime String?
   usedMemory String?
   error String?
   user String
   score Int?
+}
+
+model SubmittedCode {
+  id String @id
+  code String
 }
 
 model Problem {

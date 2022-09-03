@@ -23,6 +23,11 @@ model SourceCode {
   score Int?
 }
 
+model SubmittedCode {
+  id String @id
+  code String
+}
+
 model Problem {
   body String
   id String @id
