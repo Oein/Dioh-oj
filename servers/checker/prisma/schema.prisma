@@ -14,7 +14,6 @@ model SourceCode {
   id String @id
   time DateTime @default(now())
   type String
-  code String
   problem String
   usedTime String?
   usedMemory String?
