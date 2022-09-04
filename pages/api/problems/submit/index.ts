@@ -7,6 +7,18 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   return new Promise<void>(async (resolve, reject) => {
     let query = req.query;
     let uToken = req.headers.authorization as string;
+
+    const curr = new Date();
+
+    // 2. UTC 시간 계산
+    const utc = curr.getTime() + curr.getTimezoneOffset() * 60 * 1000;
+
+    // 3. UTC to KST (UTC + 9시간)
+    const KR_TIME_DIFF = 9 * 60 * 60 * 1000;
+    const kr_curr = new Date(utc + KR_TIME_DIFF);
+
+    console.log(`T : ${kr_curr.toString()}`);
+
     if (uToken == "") {
       res.send(
         JSON.stringify({
@@ -127,6 +139,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
                       type: type,
                       user: uToken,
                       problem: problem,
+                      time: kr_curr,
                     },
                   })
                   .then((v) => {
