@@ -3,7 +3,7 @@ import { Table } from "@nextui-org/react";
 import MyHead from "../../components/head";
 import { RealtimeClient } from "@supabase/realtime-js";
 import { SourceCode } from "@prisma/client";
-import DTT from "../../utils/dateToTime";
+import DTT from "../../util/dateToTime";
 import { uid } from "uid";
 import realtimeMSG from "../../types/realtimeMSG";
 
