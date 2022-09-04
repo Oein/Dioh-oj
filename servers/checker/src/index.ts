@@ -333,7 +333,7 @@ function queueing() {
                           havingPoint: y.havingPoint + p.point,
                         },
                       });
-                      prisma.problem.update({
+                      await prisma.problem.update({
                         where: {
                           id: v.problem,
                         },
