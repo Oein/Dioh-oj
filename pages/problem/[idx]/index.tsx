@@ -13,6 +13,7 @@ import { FiSend as Count } from "react-icons/fi";
 
 import dynamic from "next/dynamic";
 import { Suspense } from "react";
+import NFullLoad from "../../../components/Loading/nFull";
 
 const MD = dynamic(() => import("../../../components/ProblemPage/md"), {
   suspense: true,
@@ -185,7 +186,7 @@ export default function ProblemPage() {
 
       {/* 본문 */}
       <div className="borderBottom">
-        <Suspense fallback={`Loading...`}>
+        <Suspense fallback={<NFullLoad />}>
           <MD text={problemArticles} />
         </Suspense>
       </div>
