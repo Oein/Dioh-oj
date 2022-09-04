@@ -160,18 +160,28 @@ export default function MyHead() {
                 <Grid>
                   {status == "authenticated" ? (
                     <div className="centerH">
-                      <div
+                      <Link
                         style={{
-                          display: "inline-block",
-                          fontSize: "var(--nextui-fontSizes-xl)",
                           color: nameColor,
-                          margin: "0px",
-                          padding: "0px",
                         }}
-                        className="font"
+                        href={`/user/${userName.split("#")[0]}/${
+                          userName.split("#")[1]
+                        }`}
                       >
-                        {userName}
-                      </div>
+                        <div
+                          style={{
+                            display: "inline-block",
+                            fontSize: "var(--nextui-fontSizes-xl)",
+                            color: nameColor,
+                            margin: "0px",
+                            padding: "0px",
+                            cursor: "pointer",
+                          }}
+                          className="font"
+                        >
+                          {userName}
+                        </div>
+                      </Link>
                       <div
                         style={{
                           margin: "0px",
