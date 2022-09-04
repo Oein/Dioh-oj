@@ -13,8 +13,9 @@ import {
 
 import dynamic from "next/dynamic";
 import { Suspense } from "react";
-import NFullLoad from "../../../components/Loading/nFull";
-
+const NFullLoad = dynamic(() => import("../../../components/Loading/nFull"), {
+  suspense: true,
+});
 const MD = dynamic(() => import("../../../components/ProblemPage/md"), {
   suspense: true,
 });
@@ -186,8 +187,10 @@ export default function ProblemPage() {
 
       {/* 본문 */}
       <div className="borderBottom">
-        <Suspense fallback={<NFullLoad />}>
-          <MD text={problemArticles} />
+        <Suspense fallback={`Loading...`}>
+          <Suspense fallback={<NFullLoad />}>
+            <MD text={problemArticles} />
+          </Suspense>
         </Suspense>
       </div>
     </article>
