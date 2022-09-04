@@ -17,8 +17,6 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     const KR_TIME_DIFF = 9 * 60 * 60 * 1000;
     const kr_curr = new Date(utc + KR_TIME_DIFF);
 
-    console.log(`T : ${kr_curr.toString()}`);
-
     if (uToken == "") {
       res.send(
         JSON.stringify({

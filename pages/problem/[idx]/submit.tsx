@@ -218,8 +218,6 @@ export default function ProblemPage() {
                   });
                   router.push(`/problem/${query.idx}`);
                 }
-
-                console.log(v.data);
               })
               .catch((err) => {
                 toast(`Error occured / ${err.message}`, {

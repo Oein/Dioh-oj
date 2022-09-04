@@ -95,7 +95,6 @@ export default function SubmitStatus() {
           </Table.Header>
           <Table.Body>
             {submits.map((v, idx) => {
-              console.log(v.time);
               return (
                 <Table.Row key={idx}>
                   <Table.Cell>{v.id}</Table.Cell>
