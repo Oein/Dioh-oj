@@ -109,45 +109,57 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
             },
           })
           .then((y) => {
-            prisma.problem.update({
-              where: {
-                id: problem,
-              },
-              data: {
-                solveRequestedCount: v.solveRequestedCount + 1,
-              },
-            });
-            prisma.sourceCode
-              .create({
+            prisma.problem
+              .update({
+                where: {
+                  id: problem,
+                },
                 data: {
-                  id: uidX,
-                  score: 0,
-                  type: type,
-                  user: uToken,
-                  problem: problem,
+                  solveRequestedCount: v.solveRequestedCount + 1,
                 },
               })
-              .then((v) => {
-                axios
-                  .post(
-                    (process.env.JUDGE_SPREADER_URL as string).replace(
-                      "_id_",
-                      uidX
-                    )
-                  )
+              .then(() => {
+                prisma.sourceCode
+                  .create({
+                    data: {
+                      id: uidX,
+                      score: 0,
+                      type: type,
+                      user: uToken,
+                      problem: problem,
+                    },
+                  })
                   .then((v) => {
-                    res.send(
-                      JSON.stringify({
-                        suc: `Successfully requested your judge.`,
+                    axios
+                      .post(
+                        (process.env.JUDGE_SPREADER_URL as string).replace(
+                          "_id_",
+                          uidX
+                        )
+                      )
+                      .then((v) => {
+                        res.send(
+                          JSON.stringify({
+                            suc: `Successfully requested your judge.`,
+                          })
+                        );
+                        console.log(
+                          `Requested ${uidX} ${uToken} ${(
+                            process.env.JUDGE_SPREADER_URL as string
+                          ).replace("_id_", uidX)}`
+                        );
+                        resolve();
+                        return;
                       })
-                    );
-                    console.log(
-                      `Requested ${uidX} ${uToken} ${(
-                        process.env.JUDGE_SPREADER_URL as string
-                      ).replace("_id_", uidX)}`
-                    );
-                    resolve();
-                    return;
+                      .catch((err) => {
+                        res.send(
+                          JSON.stringify({
+                            err: `Err / ${err}`,
+                          })
+                        );
+                        resolve();
+                        return;
+                      });
                   })
                   .catch((err) => {
                     res.send(
@@ -158,15 +170,6 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
                     resolve();
                     return;
                   });
-              })
-              .catch((err) => {
-                res.send(
-                  JSON.stringify({
-                    err: `Err / ${err}`,
-                  })
-                );
-                resolve();
-                return;
               });
           })
           .catch((err) => {
