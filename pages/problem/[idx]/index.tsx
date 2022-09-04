@@ -10,7 +10,13 @@ import {
 } from "react-icons/ai";
 import { MdMemory as Memory } from "react-icons/md";
 import { FiSend as Count } from "react-icons/fi";
-import MD from "../../../components/ProblemPage/md";
+
+import dynamic from "next/dynamic";
+import { Suspense } from "react";
+
+const MD = dynamic(() => import("../../../components/ProblemPage/md"), {
+  suspense: true,
+});
 
 export default function ProblemPage() {
   let router = useRouter();
@@ -179,7 +185,9 @@ export default function ProblemPage() {
 
       {/* 본문 */}
       <div className="borderBottom">
-        <MD text={problemArticles} />
+        <Suspense fallback={`Loading...`}>
+          <MD text={problemArticles} />
+        </Suspense>
       </div>
     </article>
   );
