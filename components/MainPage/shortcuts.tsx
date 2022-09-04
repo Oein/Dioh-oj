@@ -75,7 +75,7 @@ export default function ShortCuts() {
             />
           </Grid>
           <Grid>
-            <Link href="https://www.coupang.com/">
+            <Link href="/shop">
               <div
                 style={{
                   color: "var(--nextui-colors-text)",
