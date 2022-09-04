@@ -5,8 +5,6 @@ export default function DTT(dt: Date): string {
   const utc = new Date(curr.getTime() + curr.getTimezoneOffset() * 60 * 1000);
 
   let diff = (utc.getTime() - dt.getTime()) / 1000;
-  console.log(`${utc.getTime()} / ${dt.getTime()}`);
-  console.log("Diff : " + diff);
   if (diff < 1) {
     return "지금";
   }
