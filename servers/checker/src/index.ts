@@ -311,6 +311,26 @@ function queueing() {
               })
               .then(async (y) => {
                 if (y == null) return;
+
+                const subR = () => {
+                  prisma.sourceCode
+                    .update({
+                      where: {
+                        id: qf,
+                      },
+                      data: {
+                        usedMemory: jresult.ram.toString(),
+                        usedTime: jresult.time.toString(),
+                        error: (jresult.error || "").toString(),
+                        score: jresult.score || 0,
+                      },
+                    })
+                    .then(() => {
+                      childs--;
+                      queueing();
+                    });
+                };
+
                 if (
                   jresult.score == 100 &&
                   !y.solvedProblems.includes(v.problem)
@@ -324,42 +344,34 @@ function queueing() {
                     .then(async (p) => {
                       if (p == null) return;
                       y.solvedProblems.push(v.problem);
-                      await prisma.user.update({
-                        where: {
-                          id: v.user,
-                        },
-                        data: {
-                          solvedProblems: y.solvedProblems,
-                          havingPoint: y.havingPoint + p.point,
-                        },
-                      });
-                      await prisma.problem.update({
-                        where: {
-                          id: v.problem,
-                        },
-                        data: {
-                          solvedPeopleCount: p.solvedPeopleCount + 1,
-                        },
-                      });
+                      await prisma.user
+                        .update({
+                          where: {
+                            id: v.user,
+                          },
+                          data: {
+                            solvedProblems: y.solvedProblems,
+                            havingPoint: y.havingPoint + p.point,
+                          },
+                        })
+                        .then((_) => {
+                          prisma.problem
+                            .update({
+                              where: {
+                                id: v.problem,
+                              },
+                              data: {
+                                solvedPeopleCount: p.solvedPeopleCount + 1,
+                              },
+                            })
+                            .then((_) => {
+                              subR();
+                            });
+                        });
                     });
+                } else {
+                  subR();
                 }
-
-                prisma.sourceCode
-                  .update({
-                    where: {
-                      id: qf,
-                    },
-                    data: {
-                      usedMemory: jresult.ram.toString(),
-                      usedTime: jresult.time.toString(),
-                      error: (jresult.error || "").toString(),
-                      score: jresult.score || 0,
-                    },
-                  })
-                  .then(() => {
-                    childs--;
-                    queueing();
-                  });
               });
           };
 
