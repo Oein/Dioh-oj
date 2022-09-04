@@ -47,7 +47,7 @@ export default function ShortCuts() {
             />
           </Grid>
           <Grid>
-            <Link href="https://beta.jungol.co.kr/problem/1193">
+            <Link href="/problem/1001">
               <div
                 style={{
                   color: "var(--nextui-colors-text)",
