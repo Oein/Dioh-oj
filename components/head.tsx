@@ -12,7 +12,7 @@ export default function MyHead() {
   let [userName, setUserName] = useState("Loading...");
   let [isAdmin, setIsAdmin] = useState(false);
   let [nameColor, setNameColor] = useState("var(--nextui-colors-text)");
-
+  let [point, setPoint] = useState("Loading...");
   const lpad = function (padString: string, length: number) {
     var str = padString;
     while (str.length < length) str = "0" + str;
@@ -56,6 +56,7 @@ export default function MyHead() {
     axios.get(`/api/user/get/token/${session.user?.id}`).then((v) => {
       setUserName(v.data.nickName);
       setNameColor(v.data.nameColor);
+      setPoint(v.data.havingPoint);
       if ((v.data.permission as string[]).includes("admin")) {
         setIsAdmin(true);
       }
@@ -113,7 +114,7 @@ export default function MyHead() {
                           fontSize: "var(--nextui-fontSizes-md)",
                           cursor: "pointer",
                         }}
-                        className="centerH"
+                        className="centerH m768"
                       >
                         Dashboard
                       </div>
@@ -126,11 +127,11 @@ export default function MyHead() {
                       style={{
                         width: "8px",
                       }}
+                      className="m768"
                     ></div>
                   </Grid>
                 ) : null}
                 {/* Profile Image */}
-
                 <Grid>
                   {status == "authenticated" ? (
                     <Image
@@ -139,7 +140,7 @@ export default function MyHead() {
                       src={`${session?.user?.image}`}
                       width="40px"
                       objectFit="contain"
-                      className="centerH"
+                      className="centerH m375"
                       css={{
                         display: "inline-block",
                         borderRadius: "20px",
@@ -158,15 +159,30 @@ export default function MyHead() {
                 </Grid>
                 <Grid>
                   {status == "authenticated" ? (
-                    <div
-                      style={{
-                        display: "inline-block",
-                        fontSize: "var(--nextui-fontSizes-xl)",
-                        color: nameColor,
-                      }}
-                      className="centerH"
-                    >
-                      @{userName}
+                    <div className="centerH">
+                      <div
+                        style={{
+                          display: "inline-block",
+                          fontSize: "var(--nextui-fontSizes-xl)",
+                          color: nameColor,
+                          margin: "0px",
+                          padding: "0px",
+                        }}
+                        className="font"
+                      >
+                        {userName}
+                      </div>
+                      <div
+                        style={{
+                          margin: "0px",
+                          padding: "0px",
+                          transform:
+                            "translateY(calc(var(--nextui-fontSizes-md) * -1 + var(--nextui-fontSizes-sm) * 0.5))",
+                        }}
+                        className="font"
+                      >
+                        Point: 1P
+                      </div>
                     </div>
                   ) : null}
                 </Grid>
