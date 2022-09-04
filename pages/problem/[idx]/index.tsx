@@ -5,11 +5,11 @@ import axios from "axios";
 import { Grid, Image, Link, Table } from "@nextui-org/react";
 
 import {
-  AiOutlineClockCircle as Time,
-  AiOutlineUser as User,
-} from "react-icons/ai";
-import { MdMemory as Memory } from "react-icons/md";
-import { FiSend as Count } from "react-icons/fi";
+  MdMemory as Memory,
+  MdPerson as User,
+  MdAccessTime as Time,
+  MdSend as Count,
+} from "react-icons/md";
 
 import dynamic from "next/dynamic";
 import { Suspense } from "react";
