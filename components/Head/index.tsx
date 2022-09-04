@@ -181,7 +181,7 @@ export default function MyHead() {
                         }}
                         className="font"
                       >
-                        Point: 1P
+                        Point: {point}P
                       </div>
                     </div>
                   ) : null}
