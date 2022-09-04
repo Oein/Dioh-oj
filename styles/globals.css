@@ -76,3 +76,22 @@ code {
 .padding5px {
   padding: 5px;
 }
+
+/* media type */
+@media only screen and (max-width: 374px) {
+  .m375 {
+    display: none !important;
+  }
+}
+
+@media only screen and (max-width: 424px) {
+  .m425 {
+    display: none !important;
+  }
+}
+
+@media only screen and (max-width: 767px) {
+  .m768 {
+    display: none !important;
+  }
+}
