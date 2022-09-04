@@ -10,6 +10,14 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Shop_Item {
+  id String @id
+  name String
+  price Int
+  imageURL String
+  description String
+}
+
 model SourceCode {
   id String @id
   time DateTime @default(now())
