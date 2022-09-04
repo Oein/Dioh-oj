@@ -46,6 +46,7 @@
     "@types/react": "18.0.17",
     "@types/react-copy-to-clipboard": "^5.0.4",
     "@types/react-dom": "18.0.6",
+    "@types/react-icons": "^3.0.0",
     "eslint": "8.22.0",
     "eslint-config-next": "12.2.5",
     "prisma": "4.2.1",
