@@ -116,7 +116,7 @@ export default function MyHead() {
                         }}
                         className="centerH m768"
                       >
-                        Dashboard
+                        Admin-Dashboard
                       </div>
                     </Link>
                   </Grid>
