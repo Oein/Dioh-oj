@@ -311,7 +311,10 @@ function queueing() {
               })
               .then(async (y) => {
                 if (y == null) return;
-                if (!y.solvedProblems.includes(v.problem)) {
+                if (
+                  jresult.score == 100 &&
+                  !y.solvedProblems.includes(v.problem)
+                ) {
                   prisma.problem
                     .findFirst({
                       where: {
@@ -328,6 +331,14 @@ function queueing() {
                         data: {
                           solvedProblems: y.solvedProblems,
                           havingPoint: y.havingPoint + p.point,
+                        },
+                      });
+                      prisma.problem.update({
+                        where: {
+                          id: v.problem,
+                        },
+                        data: {
+                          solvedPeopleCount: p.solvedPeopleCount + 1,
                         },
                       });
                     });
