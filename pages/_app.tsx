@@ -82,6 +82,12 @@ function MyApp({ Component, pageProps }: AppProps) {
                   name="viewport"
                   content="viewport-fit=cover,width=device-width,"
                 />
+                <meta name="author" content="Oein , Dina"></meta>
+                <meta
+                  name="description"
+                  content="Dioh is a online judge website for who enjoies coding."
+                ></meta>
+                <meta property="og:title" content="Dioh"></meta>
               </Head>
               <Component {...pageProps} />
             </div>
