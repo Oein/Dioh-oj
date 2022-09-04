@@ -34,6 +34,11 @@ pre {
   padding: 0px !important;
 }
 
+details {
+  background: var(--nextui-colors-background);
+  box-shadow: var(--nextui-shadows-md);
+}
+
 .container {
   padding-right: 15px;
   padding-left: 15px;
