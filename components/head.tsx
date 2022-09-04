@@ -11,6 +11,7 @@ export default function MyHead() {
   const { data: session, status } = useSession();
   let [userName, setUserName] = useState("Loading...");
   let [isAdmin, setIsAdmin] = useState(false);
+  let [nameColor, setNameColor] = useState("var(--nextui-colors-text)");
 
   const lpad = function (padString: string, length: number) {
     var str = padString;
@@ -54,6 +55,7 @@ export default function MyHead() {
     if (status != "authenticated") return;
     axios.get(`/api/user/get/token/${session.user?.id}`).then((v) => {
       setUserName(v.data.nickName);
+      setNameColor(v.data.nameColor);
       if ((v.data.permission as string[]).includes("admin")) {
         setIsAdmin(true);
       }
@@ -160,6 +162,7 @@ export default function MyHead() {
                       style={{
                         display: "inline-block",
                         fontSize: "var(--nextui-fontSizes-xl)",
+                        color: nameColor,
                       }}
                       className="centerH"
                     >
