@@ -5,19 +5,7 @@ import { RealtimeClient } from "@supabase/realtime-js";
 import { SourceCode } from "@prisma/client";
 import DTT from "../../utils/dateToTime";
 import { uid } from "uid";
-
-interface realtimeMSG {
-  columns: { name: string; type: string }[];
-  commit_timestamp: string;
-  errors: null | any;
-  record: SourceCode;
-  schema: string;
-  table: string;
-  type: string;
-  old_record: {
-    id: string;
-  } | null;
-}
+import realtimeMSG from "../../types/realtimeMSG";
 
 export default function SubmitStatus() {
   let [submits, setSubmits] = useState<SourceCode[]>([]);
