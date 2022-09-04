@@ -1,13 +1,13 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { prisma } from "../../../../../../util/prisma";
+import { prisma } from "../../../../../../../util/prisma";
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { nickname } = req.query;
+  const { nickname, number } = req.query;
   return new Promise<void>((resolve, reject) => {
     prisma.user
       .findFirst({
         where: {
-          nickName: nickname as string,
+          nickName: `${nickname as string}#${number as string}`,
         },
       })
       .then((v) => {
