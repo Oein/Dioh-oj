@@ -75,7 +75,7 @@ export default function MyHead() {
         paddingTop: "0px",
         borderBottom: `1px solid ${theme?.colors.neutralBorder.value}`,
         background: `${theme?.colors.background.value}`,
-        zIndex: "12345",
+        zIndex: "9999",
       }}
       className="container"
     >
