@@ -173,7 +173,7 @@ async function judge(v: SourceCode, sourcode: string) {
             input.trim().replace("\n", "").length <= 0
           ) {
             try {
-              exec.stdin?.write(input + "\n", (err) => {
+              exec.stdin?.write(input + "\n", "utf-8", (err) => {
                 console.log("ERR WRITE : " + err);
               });
             } catch (e) {
