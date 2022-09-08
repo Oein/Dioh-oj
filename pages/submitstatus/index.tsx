@@ -11,6 +11,12 @@ import Load from "../../components/Loading";
 import axios from "axios";
 import { toast } from "react-toastify";
 
+const langName: { [key: string]: string } = {
+  cpp: "C++",
+  js: "JavaScript",
+  py: "Python",
+};
+
 export default function SubmitStatus() {
   let [submits, setSubmits] = useState<SourceCode[]>([]);
   let [submits2, setSubmits2] = useState<SourceCode[]>([]);
@@ -153,7 +159,10 @@ export default function SubmitStatus() {
                     </div>
                   </Table.Cell>
                   <Table.Cell>{v.score}</Table.Cell>
-                  <Table.Cell>{v.type}</Table.Cell>
+                  <Table.Cell>
+                    {(langName[v.type as string] as string) ||
+                      (v.type as string)}
+                  </Table.Cell>
                   <Table.Cell>{DTT(new Date(v.time))}</Table.Cell>
                 </Table.Row>
               );
