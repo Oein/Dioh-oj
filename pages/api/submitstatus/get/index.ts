@@ -39,7 +39,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         orderBy: {
           time: "desc",
         },
-        skip: 1,
+        skip: 0,
         take: 30,
       });
     }

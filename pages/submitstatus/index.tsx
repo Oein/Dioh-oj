@@ -13,6 +13,7 @@ import { toast } from "react-toastify";
 
 export default function SubmitStatus() {
   let [submits, setSubmits] = useState<SourceCode[]>([]);
+  let [submits2, setSubmits2] = useState<SourceCode[]>([]);
   let [temp__________, temp__________s] = useState("");
   let [loading, load] = useState(false);
   let [cursor, setCursor] = useState("");
@@ -26,6 +27,7 @@ export default function SubmitStatus() {
 
   useEffect(() => {
     let subs: SourceCode[] = submits;
+    let nameDB: { [key: string]: string } = {};
     const socket = new RealtimeClient(
       process.env.NEXT_PUBLIC_REALTIME_URL || "ws://localhost:4000/socket",
       {
@@ -54,6 +56,32 @@ export default function SubmitStatus() {
         }
       }
 
+      let userID = msg.record.user;
+
+      if (nameDB[userID]) {
+        msg.record.user = nameDB[userID];
+      } else {
+        axios.get(`/api/user/get/token/${userID}`).then((v) => {
+          let step_a = subs.find((c) => c.id == msg.record.id) as SourceCode;
+          let step_b = subs.indexOf(step_a);
+
+          msg.record.user = JSON.stringify({
+            name: v.data.nickName,
+            color: v.data.nameColor,
+          });
+          nameDB[userID] = JSON.stringify({
+            name: v.data.nickName,
+            color: v.data.nameColor,
+          });
+          subs[step_b].user = msg.record.user;
+          setSubmits(subs);
+        });
+        msg.record.user = JSON.stringify({
+          name: "Loading...",
+          color: userID,
+        });
+      }
+
       subs = [msg.record].concat(subs);
       setSubmits(subs);
     });
@@ -63,10 +91,16 @@ export default function SubmitStatus() {
       // msg.old_record = {
       //  id: "ID",
       // }
-      let step_a = subs.find((c) => c.id == msg.old_record?.id) as SourceCode;
-      let step_b = subs.indexOf(step_a);
-      subs[step_b] = msg.record;
-      setSubmits(subs);
+      try {
+        let step_a = subs.find((c) => c.id == msg.old_record?.id) as SourceCode;
+        let step_b = subs.indexOf(step_a);
+        subs[step_b].score = msg.record.score;
+        setSubmits(subs);
+      } catch (e) {
+        toast(`ERR / ${e}`, {
+          type: "error",
+        });
+      }
     });
     channel.subscribe().receive("ok", () => console.log("Connected!"));
 
@@ -104,12 +138,20 @@ export default function SubmitStatus() {
             <Table.Column>제출 시각</Table.Column>
           </Table.Header>
           <Table.Body>
-            {submits.map((v, idx) => {
+            {submits.concat(submits2).map((v, idx) => {
               return (
                 <Table.Row key={idx}>
                   <Table.Cell>{v.id}</Table.Cell>
                   <Table.Cell>{v.problem}</Table.Cell>
-                  <Table.Cell>{v.user}</Table.Cell>
+                  <Table.Cell>
+                    <div
+                      style={{
+                        color: JSON.parse(v.user).color,
+                      }}
+                    >
+                      {JSON.parse(v.user).name}
+                    </div>
+                  </Table.Cell>
                   <Table.Cell>{v.score}</Table.Cell>
                   <Table.Cell>{v.type}</Table.Cell>
                   <Table.Cell>{DTT(new Date(v.time))}</Table.Cell>
@@ -126,6 +168,9 @@ export default function SubmitStatus() {
           }}
           onClick={() => {
             load(true);
+            if (cursor == "" && submits.length > 0) {
+              cursor = submits[submits.length - 1].id;
+            }
             axios
               .get(`/api/submitstatus/get?cursor=${cursor}`)
               .then((v) => {
@@ -137,7 +182,7 @@ export default function SubmitStatus() {
                 }
                 console.log(v.data);
                 setCursor(v.data[v.data.length - 1].id);
-                setSubmits(submits.concat(v.data));
+                setSubmits2(submits2.concat(v.data));
               })
               .catch((err) => {
                 toast(`Err / ${err}`, {
