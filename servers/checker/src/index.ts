@@ -168,7 +168,7 @@ async function judge(v: SourceCode, sourcode: string) {
           if (
             exec.stdin?.writable &&
             exec.killed == false &&
-            input.trim() == ""
+            input.trim().replace("\n", "").length <= 0
           ) {
             try {
               exec.stdin?.write(input + "\n", (err) => {
