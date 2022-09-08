@@ -164,7 +164,7 @@ async function judge(v: SourceCode, sourcode: string) {
 
         exec.on("spawn", () => {
           st = new Date();
-          exec.stdin?.write(input + "\n");
+          if (exec.stdin?.writable) exec.stdin?.write(input + "\n");
         });
 
         ramInvi = setInterval(ramMonitor, ramCheckCycle);
