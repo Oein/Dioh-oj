@@ -217,11 +217,11 @@ export default function ProblemPage() {
           color: lightblue;
         }
         50%  {
-          transform: translate(10vw , -10vw) rotate(-45deg);
+          transform: translate(20vw , -20vh) rotate(-45deg);
           color: lightblue;
         }
         50.0001%  {
-          transform: translate(-10vw , 10vw) rotate(-45deg);
+          transform: translate(-20vw , 20vh) rotate(-45deg);
           color: lightblue;
         }
         80%  {
