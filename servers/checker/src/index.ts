@@ -167,6 +167,8 @@ async function judge(v: SourceCode, sourcode: string) {
           console.log("Input : " + input);
           if (
             exec.stdin?.writable &&
+            exec.stdin.writableFinished == false &&
+            exec.stdin.writableEnded == false &&
             exec.killed == false &&
             input.trim().replace("\n", "").length <= 0
           ) {
