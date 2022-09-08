@@ -164,6 +164,7 @@ async function judge(v: SourceCode, sourcode: string) {
 
         exec.on("spawn", () => {
           st = new Date();
+          console.log("Input : " + input);
           if (
             exec.stdin?.writable &&
             exec.killed == false &&
