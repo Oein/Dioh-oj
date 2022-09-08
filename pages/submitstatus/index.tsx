@@ -152,13 +152,19 @@ export default function SubmitStatus() {
                     <Link href={`/problem/${v.problem}`}>{v.problem}</Link>
                   </Table.Cell>
                   <Table.Cell>
-                    <div
-                      style={{
-                        color: JSON.parse(v.user).color,
-                      }}
+                    <Link
+                      href={`/user/${JSON.parse(v.user).name.split("#")[0]}/${
+                        JSON.parse(v.user).name.split("#")[1]
+                      }`}
                     >
-                      {JSON.parse(v.user).name}
-                    </div>
+                      <div
+                        style={{
+                          color: JSON.parse(v.user).color,
+                        }}
+                      >
+                        {JSON.parse(v.user).name}
+                      </div>
+                    </Link>
                   </Table.Cell>
                   <Table.Cell>{v.score}</Table.Cell>
                   <Table.Cell>
