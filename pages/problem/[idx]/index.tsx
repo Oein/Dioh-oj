@@ -156,7 +156,7 @@ export default function ProblemPage() {
           <Table.Column>
             <Grid.Container>
               <Grid>
-                <Count size="1.6em" className="centerH" />
+                <Count size="1.6em" className="centerH flyer" />
               </Grid>
               <Grid>
                 <div className="centerH">제출 횟수</div>
@@ -166,7 +166,7 @@ export default function ProblemPage() {
           <Table.Column>
             <Grid.Container>
               <Grid>
-                <User size="1.6em" className="centerH" />
+                <User size="1.6em" className="centerH flipOnHover" />
               </Grid>
               <Grid>
                 <div className="centerH">성공한 사람수</div>
@@ -193,6 +193,57 @@ export default function ProblemPage() {
           </Suspense>
         </Suspense>
       </div>
+
+      <style>{`
+      .rotateOnHover , .flipOnHover {
+        transition: all 1s ease;
+      }
+
+      .rotateOnHover:hover {
+        transform: translateY(-50%) rotate(360deg);
+        color: black;
+      }
+
+      @keyframes fly {
+        0%   {
+
+        }
+        15%  {
+          transform: translateY(-50%) rotate(-45deg);
+          color: lightblue;
+        }
+        20%  {
+          transform: translateY(-50%) rotate(-45deg);
+          color: lightblue;
+        }
+        50%  {
+          transform: translate(10vw , -10vw) rotate(-45deg);
+          color: lightblue;
+        }
+        50.0001%  {
+          transform: translate(-10vw , 10vw) rotate(-45deg);
+          color: lightblue;
+        }
+        80%  {
+          transform: translateY(-50%) rotate(-45deg);
+          color: lightblue;
+        }
+        100% {
+          
+        }
+      }
+
+      .flyer:hover {
+        animation-name: fly;
+        animation-duration: 3s;
+        transition: all 1s ease;
+      }
+
+      .flipOnHover:hover {
+        transform: translateY(-50%) rotateY(180deg);
+        color: black;
+      }
+    `}</style>
     </article>
   );
 }
