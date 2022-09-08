@@ -8,6 +8,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import customAxios from "../../util/customAxios";
 import { toast } from "react-toastify";
+import { uid } from "uid";
 
 const Item = ({
   imageURL,
@@ -91,6 +92,8 @@ export default function Shop() {
   let [color, setColor] = useColor("hex", "#000000");
   // Change nickname
   let [inputStr, setInputStr] = useState("");
+  // force refresh
+  let [forceREF, forceREF__] = useState("");
 
   let [loading, load] = useState(false);
   let session = useSession();
@@ -102,10 +105,21 @@ export default function Shop() {
     }
   }, [router, session.status]);
 
+  const refresh = () => {
+    forceREF__(uid());
+  };
+
   return (
     <>
       {session.status == "loading" ? <Load /> : null}
       {loading ? <Load /> : null}
+      <div
+        style={{
+          display: "none",
+        }}
+      >
+        {forceREF}
+      </div>
       <MyHead />
 
       {/* 닉 변경 */}
@@ -220,6 +234,80 @@ export default function Shop() {
         </Modal.Footer>
       </Modal>
 
+      {/* 테그 넘 변경 */}
+      <Modal open={modalID == 2} onClose={() => setModalID(-1)}>
+        <Modal.Header>
+          <div
+            style={{
+              fontSize: "var(--nextui-fontSizes-xl)",
+            }}
+          >
+            Change Tag Number
+          </div>
+        </Modal.Header>
+        <Modal.Body>
+          <div
+            style={{
+              height: "14px",
+            }}
+          ></div>
+          <Input
+            labelPlaceholder="새로운 태그 번호"
+            value={inputStr}
+            maxLength={4}
+            onChange={(e) => {
+              let v = e.target.value.replace(/[^0-9]/g, "");
+              while (v.length > 4) {
+                v = v.slice(0, 4);
+              }
+              setInputStr(v);
+              refresh();
+            }}
+            onKeyUp={() => {
+              refresh();
+            }}
+            onBlur={() => {
+              let v = inputStr.replace(/[^0-9]/g, "");
+              while (v.length < 4) {
+                v = "0" + v;
+              }
+              while (v.length > 4) {
+                v = v.slice(0, 4);
+              }
+              setInputStr(v);
+              refresh();
+            }}
+          />
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            color="success"
+            onClick={() => {
+              load(true);
+              setModalID(-1);
+              customAxios
+                .get(`/api/user/update/tag/${inputStr}`)
+                .then((v) => {
+                  if (v.data.err) {
+                    toast(`Err occured / ${v.data.err}`, { type: "error" });
+                  }
+                  if (v.data.suc) {
+                    toast(`${v.data.suc}`, { type: "success" });
+                  }
+                })
+                .catch((e) => {
+                  toast(`Err occured / ${e}`, { type: "error" });
+                })
+                .finally(() => {
+                  load(false);
+                });
+            }}
+          >
+            구매
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
       <article className="container m375">
         <Item
           imageURL="/images/articles.svg"
@@ -234,7 +322,7 @@ export default function Shop() {
           name="태그 번호 변경"
           price={100}
           buyListener={() => {
-            alert("You bought!");
+            setModalID(2);
           }}
         />
         <Item
