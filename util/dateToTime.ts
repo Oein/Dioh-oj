@@ -1,10 +1,15 @@
 export default function DTT(dt: Date): string {
   const curr = new Date();
+  return new Date(
+    dt.getTime() + curr.getTimezoneOffset() * 60 * 1000
+  ).toLocaleString();
 
   // 2. UTC 시간 계산
   const utc = new Date(curr.getTime() + curr.getTimezoneOffset() * 60 * 1000);
 
+  console.log("ME : " + dt.getTime() + "  UTC : " + utc.getTime());
   let diff = (utc.getTime() - dt.getTime()) / 1000;
+  console.log("Diff : " + diff);
   if (diff < 1) {
     return "지금";
   }
