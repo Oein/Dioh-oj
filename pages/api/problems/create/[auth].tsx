@@ -128,10 +128,10 @@ export default async function CreateApi(
             return;
           }
 
-          if (num_point > 10) {
+          if (num_point > 100) {
             res.send(
               JSON.stringify({
-                err: "Problem point is bigger than 10",
+                err: "Problem point is bigger than 100",
               })
             );
             resolve();
