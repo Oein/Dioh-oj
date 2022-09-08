@@ -89,6 +89,40 @@ export default function ShortCuts() {
             </Link>
           </Grid>
         </Grid.Container>
+        <Grid.Container>
+          <Grid>
+            <div
+              style={{
+                margin: "3px",
+              }}
+            >
+              <Image
+                showSkeleton
+                width={"1.7em"}
+                objectFit="contain"
+                src="../../images/chart.svg"
+                alt="Dina의 이미지"
+                style={{
+                  cursor: "pointer",
+                }}
+              />
+            </div>
+          </Grid>
+          <Grid>
+            <Link href="/submitstatus/">
+              <div
+                style={{
+                  color: "var(--nextui-colors-text)",
+                  fontSize: "var(--nextui-fontSizes-xl)",
+                  cursor: "pointer",
+                }}
+                className="font centerH"
+              >
+                제출현황
+              </div>
+            </Link>
+          </Grid>
+        </Grid.Container>
       </div>
     </>
   );
