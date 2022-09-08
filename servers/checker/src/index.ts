@@ -170,7 +170,7 @@ async function judge(v: SourceCode, sourcode: string) {
             exec.stdin.writableFinished == false &&
             exec.stdin.writableEnded == false &&
             exec.killed == false &&
-            input.trim().replace("\n", "").length <= 0
+            input.trim().replace("\n", "").length > 0
           ) {
             try {
               exec.stdin?.write(input + "\n", "utf-8", (err) => {
