@@ -58,6 +58,23 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       return;
     }
     token.nickName = `${token.nickName.split("#")[0]}#${newTag}`;
+
+    let oldU = await prisma.user.findFirst({
+      where: {
+        nickName: token.nickName,
+      },
+    });
+
+    if (oldU != null) {
+      res.send(
+        JSON.stringify({
+          err: `User already exists with nickname ${token.nickName}`,
+        })
+      );
+      resolve();
+      return;
+    }
+
     await prisma.user
       .update({
         where: {
