@@ -94,16 +94,6 @@ export default function MD(props: { text: string }) {
           transform: scale(1.5);
         }
       `}</style>
-
-      <style>{`
-  .rotateOnHover {
-    transition: all 1s ease;
-  }
-
-  .rotateOnHover:hover {
-    transform: translateY(-50%) rotate(360deg);
-  }
-  `}</style>
     </>
   );
 }
