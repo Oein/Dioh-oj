@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Table } from "@nextui-org/react";
+import { Button, Link, Table } from "@nextui-org/react";
 import MyHead from "../../components/head";
 import { RealtimeClient } from "@supabase/realtime-js";
 import { SourceCode } from "@prisma/client";
@@ -148,7 +148,9 @@ export default function SubmitStatus() {
               return (
                 <Table.Row key={idx}>
                   <Table.Cell>{v.id}</Table.Cell>
-                  <Table.Cell>{v.problem}</Table.Cell>
+                  <Table.Cell>
+                    <Link href={`/problem/${v.problem}`}>{v.problem}</Link>
+                  </Table.Cell>
                   <Table.Cell>
                     <div
                       style={{
