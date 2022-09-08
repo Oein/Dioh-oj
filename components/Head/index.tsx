@@ -191,7 +191,11 @@ export default function MyHead() {
                         }}
                         className="font"
                       >
-                        Point: {point}P
+                        Point:{" "}
+                        {point
+                          .toString()
+                          .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")}
+                        P
                       </div>
                     </div>
                   ) : null}
