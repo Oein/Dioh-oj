@@ -20,17 +20,17 @@ const Items: ItemType[] = [
   {
     name: "닉네임 변경",
     point: 100,
-    imageUrl: "/images/articles.svg",
+    imageUrl: "/images/nick.svg",
   },
   {
     name: "이름 색상 변경",
     point: 100,
-    imageUrl: "/images/articles.svg",
+    imageUrl: "/images/color.svg",
   },
   {
     name: "태그 번호 변경",
     point: 100,
-    imageUrl: "/images/articles.svg",
+    imageUrl: "/images/tag.svg",
   },
 ];
 
