@@ -164,7 +164,11 @@ async function judge(v: SourceCode, sourcode: string) {
 
         exec.on("spawn", () => {
           st = new Date();
-          if (exec.stdin?.writable && exec.killed == false) {
+          if (
+            exec.stdin?.writable &&
+            exec.killed == false &&
+            input.trim() == ""
+          ) {
             try {
               exec.stdin?.write(input + "\n", (err) => {
                 console.log("ERR WRITE : " + err);
