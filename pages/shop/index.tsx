@@ -142,8 +142,26 @@ export default function Shop() {
           <Input
             labelPlaceholder="새로운 닉네임"
             value={inputStr}
+            pattern="[a-zA-Z0-9]"
+            maxLength={16}
             onChange={(e) => {
-              setInputStr(e.target.value);
+              setInputStr(
+                (e.target.value as string).replace(/[^a-zA-Z0-9]/g, "")
+              );
+              refresh();
+            }}
+            onKeyUp={(e) => {
+              const regExp = /[^0-9a-zA-Z]/g;
+              const ele = e.target as any;
+              if (regExp.test(ele.value)) {
+                setInputStr(ele.value.replace(regExp, ""));
+              }
+            }}
+            onBlur={() => {
+              let g = (inputStr as string).replace(/[^a-zA-Z0-9]/g, "");
+              setInputStr(g);
+              refresh();
+              setTimeout(refresh, 10);
             }}
           />
         </Modal.Body>
