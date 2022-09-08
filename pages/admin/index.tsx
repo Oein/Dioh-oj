@@ -159,7 +159,7 @@ let pages: SubPage[] = [
             labelPlaceholder="Problem Point"
             type="number"
             min="0"
-            max="10"
+            max="100"
             fullWidth
             value={prop.point}
             onChange={(e) => {
