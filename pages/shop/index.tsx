@@ -10,6 +10,30 @@ import customAxios from "../../util/customAxios";
 import { toast } from "react-toastify";
 import { uid } from "uid";
 
+interface ItemType {
+  name: string;
+  point: number;
+  imageUrl: string;
+}
+
+const Items: ItemType[] = [
+  {
+    name: "닉네임 변경",
+    point: 100,
+    imageUrl: "/images/articles.svg",
+  },
+  {
+    name: "이름 색상 변경",
+    point: 100,
+    imageUrl: "/images/articles.svg",
+  },
+  {
+    name: "태그 번호 변경",
+    point: 100,
+    imageUrl: "/images/articles.svg",
+  },
+];
+
 const Item = ({
   imageURL,
   name,
@@ -24,8 +48,6 @@ const Item = ({
   return (
     <div
       style={{
-        width: "calc(100% / 3.3)",
-        height: "calc(100% / 3.3)",
         background: "white",
         margin: "5px",
         display: "inline-block",
@@ -33,6 +55,7 @@ const Item = ({
         borderRadius: "var(--nextui-radii-md)",
         padding: "var(--nextui-radii-md)",
       }}
+      className="item__"
     >
       <Image showSkeleton width="70%" src={imageURL} alt="Item image" />
       <Text
@@ -327,30 +350,21 @@ export default function Shop() {
       </Modal>
 
       <article className="container m375">
-        <Item
-          imageURL="/images/articles.svg"
-          name="닉네임 변경"
-          price={100}
-          buyListener={() => {
-            setModalID(0);
-          }}
-        />
-        <Item
-          imageURL="/images/articles.svg"
-          name="태그 번호 변경"
-          price={100}
-          buyListener={() => {
-            setModalID(2);
-          }}
-        />
-        <Item
-          imageURL="/images/articles.svg"
-          name="이름 색상 변경"
-          price={100}
-          buyListener={() => {
-            setModalID(1);
-          }}
-        />
+        <div>
+          {Items.map((item, idx) => {
+            return (
+              <Item
+                imageURL={item.imageUrl}
+                name={item.name}
+                price={item.point}
+                key={idx}
+                buyListener={() => {
+                  setModalID(idx);
+                }}
+              />
+            );
+          })}
+        </div>
       </article>
 
       <article className="nm375">
@@ -370,6 +384,18 @@ export default function Shop() {
           화면이 너무 작아 상점을 표시할 수 없습니다.
         </div>
       </article>
+
+      <style>{`
+        .item__ {
+          width: calc(100% / 3 - 10px);
+        }
+
+        @media only screen and (min-width: 747px) {
+          .item__ {
+            width: calc(100% / 6.5);
+          }
+        }
+      `}</style>
     </>
   );
 }
