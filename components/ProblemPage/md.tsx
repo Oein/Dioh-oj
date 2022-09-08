@@ -86,12 +86,12 @@ export default function MD(props: { text: string }) {
           position: absolute;
           right: 10px;
           top: 8px;
-          transition: all 0.1s ease;
+          transition: all 0.2s ease;
           cursor: pointer;
         }
 
         .copyToClipboard:hover {
-          transform: scale(1.5);
+          transform: scale(1.5) rotateZ(360deg);
         }
       `}</style>
     </>
