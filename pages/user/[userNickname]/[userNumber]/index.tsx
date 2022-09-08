@@ -168,6 +168,8 @@ export default function Mypage() {
                     key={idx}
                     style={{
                       color: "var(--nextui-colors-text)",
+                      display: "inline-block",
+                      marginRight: "5px",
                     }}
                   >
                     <div>{v}</div>
