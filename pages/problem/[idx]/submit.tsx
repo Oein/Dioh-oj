@@ -11,7 +11,7 @@ import { toast } from "react-toastify";
 import Load from "../../../components/Loading";
 import { useSession } from "next-auth/react";
 
-import customAxios from "../../../module/customAxios";
+import customAxios from "../../../util/customAxios";
 
 const options = [
   { value: "cpp", label: "CPP" },

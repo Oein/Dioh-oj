@@ -6,7 +6,7 @@ import "react-color-palette/lib/css/styles.css";
 import Load from "../../components/Loading/index";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import customAxios from "../../module/customAxios";
+import customAxios from "../../util/customAxios";
 import { toast } from "react-toastify";
 
 const Item = ({
