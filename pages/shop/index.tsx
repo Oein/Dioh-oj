@@ -1,8 +1,13 @@
 import MyHead from "../../components/head";
 import { Grid, Image, Text, Modal, Button, Input } from "@nextui-org/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ColorPicker, useColor } from "react-color-palette";
 import "react-color-palette/lib/css/styles.css";
+import Load from "../../components/Loading/index";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
+import customAxios from "../../module/customAxios";
+import { toast } from "react-toastify";
 
 const Item = ({
   imageURL,
@@ -82,9 +87,25 @@ const Item = ({
 
 export default function Shop() {
   let [modalID, setModalID] = useState(-1);
+  // Change nickname color
   let [color, setColor] = useColor("hex", "#000000");
+  // Change nickname
+  let [inputStr, setInputStr] = useState("");
+
+  let [loading, load] = useState(false);
+  let session = useSession();
+  let router = useRouter();
+
+  useEffect(() => {
+    if (session.status == "unauthenticated") {
+      router.push("/auth/signin");
+    }
+  }, [router, session.status]);
+
   return (
     <>
+      {session.status == "loading" ? <Load /> : null}
+      {loading ? <Load /> : null}
       <MyHead />
 
       {/* 닉 변경 */}
@@ -104,10 +125,40 @@ export default function Shop() {
               height: "14px",
             }}
           ></div>
-          <Input labelPlaceholder="새로운 닉네임" />
+          <Input
+            labelPlaceholder="새로운 닉네임"
+            value={inputStr}
+            onChange={(e) => {
+              setInputStr(e.target.value);
+            }}
+          />
         </Modal.Body>
         <Modal.Footer>
-          <Button color="success">구매</Button>
+          <Button
+            color="success"
+            onClick={() => {
+              load(true);
+              setModalID(-1);
+              customAxios
+                .get(`/api/user/update/nickname/${inputStr}`)
+                .then((v) => {
+                  if (v.data.err) {
+                    toast(`Err occured / ${v.data.err}`, { type: "error" });
+                  }
+                  if (v.data.suc) {
+                    toast(`${v.data.suc}`, { type: "success" });
+                  }
+                })
+                .catch((e) => {
+                  toast(`Err occured / ${e}`, { type: "error" });
+                })
+                .finally(() => {
+                  load(false);
+                });
+            }}
+          >
+            구매
+          </Button>
         </Modal.Footer>
       </Modal>
 
@@ -141,7 +192,31 @@ export default function Shop() {
           </div>
         </Modal.Body>
         <Modal.Footer>
-          <Button color="success">구매</Button>
+          <Button
+            color="success"
+            onClick={() => {
+              load(true);
+              setModalID(-1);
+              customAxios
+                .get(`/api/user/update/color/${color.hex.slice(1)}`)
+                .then((v) => {
+                  if (v.data.err) {
+                    toast(`Err occured / ${v.data.err}`, { type: "error" });
+                  }
+                  if (v.data.suc) {
+                    toast(`${v.data.suc}`, { type: "success" });
+                  }
+                })
+                .catch((e) => {
+                  toast(`Err occured / ${e}`, { type: "error" });
+                })
+                .finally(() => {
+                  load(false);
+                });
+            }}
+          >
+            구매
+          </Button>
         </Modal.Footer>
       </Modal>
 
