@@ -164,10 +164,15 @@ async function judge(v: SourceCode, sourcode: string) {
 
         exec.on("spawn", () => {
           st = new Date();
-          if (exec.stdin?.writable && exec.killed == false)
-            exec.stdin?.write(input + "\n", (err) => {
-              console.log("ERR WRITE : " + err);
-            });
+          if (exec.stdin?.writable && exec.killed == false) {
+            try {
+              exec.stdin?.write(input + "\n", (err) => {
+                console.log("ERR WRITE : " + err);
+              });
+            } catch (e) {
+              console.log("ERR WRITE : " + e);
+            }
+          }
         });
 
         ramInvi = setInterval(ramMonitor, ramCheckCycle);
