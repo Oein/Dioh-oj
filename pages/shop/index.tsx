@@ -1,15 +1,17 @@
-import MyHead from "../../components/head";
-import MyFooter from "../../components/footer";
 import { Grid, Image, Text, Modal, Button, Input } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import { ColorPicker, useColor } from "react-color-palette";
-import "react-color-palette/lib/css/styles.css";
-import Load from "../../components/Loading/index";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import customAxios from "../../util/customAxios";
 import { toast } from "react-toastify";
 import { uid } from "uid";
+
+import "react-color-palette/lib/css/styles.css";
+
+import MyHead from "../../components/head";
+import MyFooter from "../../components/footer";
+import customAxios from "../../util/customAxios";
+import Load from "../../components/Loading/index";
 
 interface ItemType {
   name: string;
