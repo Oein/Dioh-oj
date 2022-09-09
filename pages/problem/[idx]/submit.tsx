@@ -97,6 +97,16 @@ export default function ProblemPage() {
               제출
             </div>
           </Grid>
+          <Grid>
+            <Link
+              href={`/problem/${query.idx}/status`}
+              style={{
+                color: "var(--nextui-colors-text)",
+              }}
+            >
+              <div className="padding5px">체점 현황</div>
+            </Link>
+          </Grid>
         </Grid.Container>
 
         {/* Title */}
