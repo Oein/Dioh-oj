@@ -6,12 +6,6 @@ import NoSSR from "react-no-ssr";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-function formatNumber(number: string) {
-  const parts = number.toString().split('.');
-  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-  return parts.join('.');
-}
-
 export default function MyHead() {
   let { theme } = useTheme();
   const { data: session, status } = useSession();
@@ -198,7 +192,7 @@ export default function MyHead() {
                         className="font"
                       >
                         Point:{" "}
-                        {formatNumber(point.toString())}
+                        {point.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                         P
                       </div>
                     </div>
