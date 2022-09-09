@@ -33,7 +33,7 @@ export default function Main() {
                 fontSize: "var(--nextui-fontSizes-md)",
               }}
             >
-              DIna and Oein&apos;s online judge
+              Dina and Oein&apos;s online judge
             </div>
           </div>
         </header>
