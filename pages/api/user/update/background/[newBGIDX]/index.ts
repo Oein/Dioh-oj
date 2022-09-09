@@ -30,10 +30,10 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       resolve();
       return;
     }
-    if ((token.permission as string[]).includes("not_submit")) {
+    if ((token.permission as string[]).includes("not_update")) {
       res.send(
         JSON.stringify({
-          err: "Not has permission to submit",
+          err: "Not has permission to update.",
         })
       );
       resolve();
@@ -42,7 +42,20 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     if ((token.permission as string[]).includes("banned")) {
       res.send(
         JSON.stringify({
-          err: "Banned from the server",
+          err: "Banned from the server.",
+        })
+      );
+      resolve();
+      return;
+    }
+    if (
+      !(token.HavingBackgroundImgIndexes as number[]).includes(
+        parseInt(newBGIDX as string)
+      )
+    ) {
+      res.send(
+        JSON.stringify({
+          err: "You do not have that background image.",
         })
       );
       resolve();
