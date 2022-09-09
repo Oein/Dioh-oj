@@ -30,10 +30,10 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       resolve();
       return;
     }
-    if ((token.permission as string[]).includes("not_submit")) {
+    if ((token.permission as string[]).includes("not_update")) {
       res.send(
         JSON.stringify({
-          err: "Not has permission to submit",
+          err: "Not has permission to update.",
         })
       );
       resolve();
@@ -42,7 +42,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     if ((token.permission as string[]).includes("banned")) {
       res.send(
         JSON.stringify({
-          err: "Banned from the server",
+          err: "Banned from the server.",
         })
       );
       resolve();
@@ -51,7 +51,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     if (token.havingPoint < 100) {
       res.send(
         JSON.stringify({
-          err: "Do not have enough point",
+          err: "Do not have enough point.",
         })
       );
       resolve();
