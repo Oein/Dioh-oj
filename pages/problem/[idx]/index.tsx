@@ -97,7 +97,7 @@ export default function ProblemPage() {
                 color: "var(--nextui-colors-text)",
               }}
             >
-              <div className="padding5px">체점 현황</div>
+              <div className="padding5px">제출현황</div>
             </Link>
           </Grid>
         </Grid.Container>

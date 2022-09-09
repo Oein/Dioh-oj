@@ -195,7 +195,7 @@ export default function SubmitStatus() {
                 color: "white",
               }}
             >
-              체점 현황
+              제출현황
             </div>
           </Grid>
         </Grid.Container>
