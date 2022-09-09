@@ -6,7 +6,13 @@ import MyHead from "../../../../components/head";
 import { uid } from "uid";
 import User from "../../../../types/user";
 import { useSession } from "next-auth/react";
-import backgroundImgURLS from "../../../../util/backgroundImgURLS";
+import backgroundImgURLS, {
+  backgroundNames,
+} from "../../../../util/backgroundImgURLS";
+import Select from "react-select";
+import Load from "../../../../components/Loading";
+import customAxios from "../../../../util/customAxios";
+import { toast } from "react-toastify";
 
 export default function Mypage() {
   let [user, setUser] = useState<User>({
@@ -26,9 +32,21 @@ export default function Mypage() {
     UserBackgroundImgIndex: 0,
     HavingBackgroundImgIndexes: [0],
   });
+  let [options, setOptions] = useState<
+    {
+      value: string;
+      label: string;
+      idx: number;
+    }[]
+  >([]);
+  let [selectedOption, setSelectedOption] = useState<{
+    value: string;
+    label: string;
+  }>();
   let [isMe, setIsMe] = useState(false);
   let [temp__________, temp__________s] = useState("");
   let [scrolled, setSCROLLY] = useState(0);
+  let [loading__, load] = useState(false);
 
   const forceRefresh = () => {
     temp__________s(uid());
@@ -43,8 +61,31 @@ export default function Mypage() {
     axios
       .get(`/api/user/get/nickname/${userNickname}/${userNumber}`)
       .then((v) => {
+        if (v.data.err) {
+          return;
+        }
         console.log(v.data);
+        const havingBGS = v.data.HavingBackgroundImgIndexes as number[];
+        console.log(havingBGS);
+        let temp__: {
+          value: string;
+          label: string;
+          idx: number;
+        }[] = [];
+        backgroundImgURLS.map((v, idx) => {
+          if (havingBGS.includes(idx)) {
+            temp__.push({
+              value: v,
+              label: backgroundNames[idx],
+              idx: idx,
+            });
+          }
+        });
+        setOptions(temp__);
         setUser(v.data as User);
+        setSelectedOption(
+          temp__.find((x) => x.idx == (v.data.UserBackgroundImgIndex as number))
+        );
         forceRefresh();
         if (
           session.status == "authenticated" &&
@@ -53,7 +94,13 @@ export default function Mypage() {
           setIsMe(true);
         }
       });
-  }, [session.data?.user?.id, session.status, userNickname, userNumber]);
+  }, [
+    session.data?.user?.id,
+    session.status,
+    userNickname,
+    userNumber,
+    temp__________,
+  ]);
 
   useEffect(() => {
     document.addEventListener("scroll", (e) => {
@@ -71,6 +118,7 @@ export default function Mypage() {
       >
         {temp__________}
       </div>
+      {loading__ ? <Load /> : null}
       <MyHead />
 
       <Image
@@ -78,11 +126,65 @@ export default function Mypage() {
         src={backgroundImgURLS[user.UserBackgroundImgIndex]}
         alt="Profile Background"
         width="100vw"
+        objectFit="cover"
         css={{
           zIndex: "-123",
           transform: `translateY(calc(${scrolled}px / 2))`,
+          maxHeight: "65vh",
         }}
+        className="BGIMG"
       />
+      <div
+        className="container BGSELEC"
+        style={{
+          position: "absolute",
+          top: "5px",
+          left: "50%",
+          transform: "translateX(-50%)",
+        }}
+      >
+        <div
+          style={{
+            position: "relative",
+            left: "0px",
+            top: "10px",
+          }}
+        >
+          <Select
+            options={options}
+            defaultValue={selectedOption}
+            value={selectedOption}
+            onChange={(e: any) => {
+              console.log(e);
+              load(true);
+              setSelectedOption(e);
+              customAxios
+                .get(`/api/user/update/background/${e.idx}`)
+                .then((v) => {
+                  if (v.data.err) {
+                    toast(`ERR / ${v.data.err}`, {
+                      type: "error",
+                    });
+                  }
+                  if (v.data.suc) {
+                    toast(`${v.data.suc}`, {
+                      type: "success",
+                    });
+                  }
+                })
+                .catch((e) => {
+                  toast(`ERR / ${e}`, {
+                    type: "error",
+                  });
+                })
+                .finally(() => {
+                  load(false);
+                  forceRefresh();
+                });
+            }}
+          />
+        </div>
+      </div>
 
       <article className="container">
         <Grid.Container
@@ -212,6 +314,25 @@ export default function Mypage() {
           </div>
         </div>
       </article>
+
+      <style>{`
+        .BGSELEC {
+          opacity: 0;
+          transition: all 0.3s ease;
+        }
+
+        ${
+          isMe
+            ? `.BGIMG:hover + .BGSELEC {
+          opacity: 1;
+        }
+
+        .BGSELEC:hover {
+          opacity: 1;
+        }`
+            : ""
+        }
+      `}</style>
     </>
   );
 }
