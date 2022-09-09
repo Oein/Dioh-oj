@@ -12,6 +12,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     } = {};
 
     let cursor = req.query.cursor;
+    let problem = req.query.problem as string;
     if (cursor == undefined || cursor == null) {
       res.send(
         JSON.stringify({
@@ -31,6 +32,9 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         orderBy: {
           time: "desc",
         },
+        where: {
+          problem: problem,
+        },
         skip: 1,
         take: 30,
       });
@@ -38,6 +42,9 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       dt = await prisma.sourceCode.findMany({
         orderBy: {
           time: "desc",
+        },
+        where: {
+          problem: problem,
         },
         skip: 0,
         take: 30,
