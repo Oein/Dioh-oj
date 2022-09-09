@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import MyHead from "../../../components/head";
+import MyFooter from "../../../components/footer";
 
 export default function Problems() {
   let [problems, setProblems] = useState<{ name: string; id: string }[]>([
@@ -128,6 +129,7 @@ export default function Problems() {
           }}
         />
       </article>
+      <MyFooter /> {/* 풋터 */}
     </>
   );
 }

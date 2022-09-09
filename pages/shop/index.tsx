@@ -1,4 +1,5 @@
 import MyHead from "../../components/head";
+import MyFooter from "../../components/footer";
 import { Grid, Image, Text, Modal, Button, Input } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import { ColorPicker, useColor } from "react-color-palette";
@@ -396,6 +397,8 @@ export default function Shop() {
           }
         }
       `}</style>
+
+      <MyFooter />
     </>
   );
 }
