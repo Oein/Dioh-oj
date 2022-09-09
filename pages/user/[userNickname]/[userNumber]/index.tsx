@@ -5,6 +5,11 @@ import { useEffect, useState } from "react";
 import MyHead from "../../../../components/head";
 import { uid } from "uid";
 import User from "../../../../types/user";
+import { useSession } from "next-auth/react";
+
+let backgroundImgURLS = [
+  "https://cdn.discordapp.com/attachments/1017382361618456587/1017603918789885982/unknown.png",
+];
 
 export default function Mypage() {
   let [user, setUser] = useState<User>({
@@ -21,8 +26,12 @@ export default function Mypage() {
     permission: [],
     solvedProblems: ["Loading..."],
     Warns: [],
+    UserBackgroundImgIndex: 0,
+    HavingBackgroundImgIndexes: [0],
   });
+  let [isMe, setIsMe] = useState(false);
   let [temp__________, temp__________s] = useState("");
+  let [scrolled, setSCROLLY] = useState(0);
 
   const forceRefresh = () => {
     temp__________s(uid());
@@ -31,6 +40,7 @@ export default function Mypage() {
   let router = useRouter();
   let { query } = router;
   let { userNickname, userNumber } = query;
+  let session = useSession();
 
   useEffect(() => {
     axios
@@ -39,8 +49,20 @@ export default function Mypage() {
         console.log(v.data);
         setUser(v.data as User);
         forceRefresh();
+        if (
+          session.status == "authenticated" &&
+          session.data.user?.id == v.data.id
+        ) {
+          setIsMe(true);
+        }
       });
-  }, [userNickname, userNumber]);
+  }, [session.data?.user?.id, session.status, userNickname, userNumber]);
+
+  useEffect(() => {
+    document.addEventListener("scroll", (e) => {
+      setSCROLLY(window.scrollY);
+    });
+  }, []);
 
   return (
     <>
@@ -53,53 +75,66 @@ export default function Mypage() {
         {temp__________}
       </div>
       <MyHead />
+
+      <Image
+        showSkeleton
+        src={backgroundImgURLS[user.UserBackgroundImgIndex]}
+        alt="Profile Background"
+        width="100vw"
+        css={{
+          zIndex: "-123",
+          transform: `translateY(calc(${scrolled}px / 2))`,
+        }}
+      />
+
       <article className="container">
-        <div
+        <Grid.Container
           style={{
-            padding: "20px",
-            borderRadius: "20px",
-            backgroundRepeat: "no-repeat",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            border: "1px var(--nextui-colors-accents3) solid",
-            boxShadow: "var(--nextui-shadows-md)",
-            marginBottom: "30px",
-            backgroundImage:
-              "url(https://cdn.discordapp.com/attachments/1017382361618456587/1017603918789885982/unknown.png)",
+            transform: "translateY(-50%)",
           }}
         >
-          <Grid.Container>
-            <Grid>
-              <Image
-                showSkeleton
-                src={user.image}
-                alt="Profile Image"
-                width="6rem"
-                height="6rem"
-                style={{
-                  borderRadius: "50%",
-                  border: "3px solid var(--nextui-colors-accents6)",
-                }}
-              />
-            </Grid>
-            <Grid>
-              <div
-                style={{
-                  width: "10px",
-                }}
-              ></div>
-            </Grid>
-            <Grid>
-              <div
-                className="centerH"
-                style={{
-                  fontSize: "var(--nextui-fontSizes-2xl)",
-                  color: `${user.nameColor}`,
-                }}
-              >{`${user.nickName}`}</div>
-            </Grid>
-          </Grid.Container>
-        </div>
+          <Grid>
+            <Image
+              showSkeleton
+              src={user.image}
+              alt="Profile Image"
+              width="6rem"
+              height="6rem"
+              style={{
+                borderRadius: "50%",
+                border: "3px solid var(--nextui-colors-accents6)",
+              }}
+            />
+          </Grid>
+          <Grid>
+            <div
+              style={{
+                width: "10px",
+              }}
+            ></div>
+          </Grid>
+          <Grid>
+            <div
+              style={{
+                fontSize: "var(--nextui-fontSizes-2xl)",
+                color: `${user.nameColor}`,
+                position: "relative",
+                top: "100%",
+                transform: "translateY(-100%)",
+                borderBottom: "var(--nextui-colors-accents7) 1px solid",
+                paddingLeft: "5px",
+                paddingRight: "5px",
+              }}
+            >{`${user.nickName}`}</div>
+          </Grid>
+        </Grid.Container>
+      </article>
+      <article
+        className="container"
+        style={{
+          marginBottom: "100px",
+        }}
+      >
         <div>
           <Table>
             <Table.Header>
@@ -138,59 +173,46 @@ export default function Mypage() {
             </Table.Body>
           </Table>
         </div>
-        <div>
-          <details
+
+        <div
+          style={{
+            marginTop: "30px",
+            borderRadius: "var(--nextui-radii-xl)",
+            boxShadow: "var(--nextui-shadows-md)",
+            padding: "var(--nextui-space-md) var(--nextui-space-sm)",
+          }}
+        >
+          <div
             style={{
-              marginTop: "30px",
               borderRadius: "var(--nextui-radii-xl)",
+              padding: "10px",
+              background: "var(--nextui-colors-accents0)",
+              color: "var(--nextui-colors-accents7)",
             }}
           >
-            <summary
-              style={{
-                borderRadius: "var(--nextui-radii-xl)",
-              }}
-            >
-              <div
-                style={{
-                  padding: "10px",
-                  background: "var(--nextui-colors-background)",
-                }}
-              >
-                <div
+            <strong>맞은 문제</strong>
+          </div>
+          <div
+            style={{
+              padding: "10px",
+            }}
+          >
+            {(user.solvedProblems || []).map((v, idx) => {
+              return (
+                <Link
+                  href={`/problem/${v}`}
+                  key={idx}
                   style={{
-                    borderRadius: "var(--nextui-radii-xl)",
-                    padding: "10px",
-                    background: "var(--nextui-colors-accents0)",
-                    color: "var(--nextui-colors-accents7)",
+                    color: "var(--nextui-colors-text)",
+                    display: "inline-block",
+                    marginRight: "5px",
                   }}
                 >
-                  <strong>맞은 문제</strong> | 눌러서 열기 / 닫기
-                </div>
-              </div>
-            </summary>
-            <div
-              style={{
-                padding: "10px",
-                background: "var(--nextui-colors-background)",
-              }}
-            >
-              {(user.solvedProblems || []).map((v, idx) => {
-                return (
-                  <Link
-                    href={`/problem/${v}`}
-                    key={idx}
-                    style={{
-                      color: "var(--nextui-colors-text)",
-                      display: "inline-block",
-                      marginRight: "5px",
-                    }}
-                  >
-                    <div>{v}</div>
-                  </Link>
-                );
-              })}
-            </div>
-          </details>
+                  <div>{v}</div>
+                </Link>
+              );
+            })}
+          </div>
         </div>
       </article>
     </>

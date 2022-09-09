@@ -83,6 +83,7 @@ model User {
   BanStarted Int @default(-1)
   Warns Json @default("[]")
   UserBackgroundImgIndex Int @default(0)
+  HavingBackgroundImgIndexes Json @default("[0]")
 }
 
 model VerificationToken {
