@@ -9,6 +9,7 @@ import { uid } from "uid";
 import Select from "react-select";
 import backgroundImgURLS, {
   backgroundNames,
+  ignoreIDX,
 } from "../../util/backgroundImgURLS";
 
 import "react-color-palette/lib/css/styles.css";
@@ -21,12 +22,15 @@ import Load from "../../components/Loading/index";
 let SelectItems: {
   value: string;
   label: string;
+  idx: number;
 }[] = [];
 
 for (let i = 0; i < backgroundImgURLS.length; i++) {
+  if (ignoreIDX.includes(i)) continue;
   SelectItems.push({
     value: backgroundImgURLS[i],
     label: backgroundNames[i] || "프로필 배경",
+    idx: i,
   });
 }
 
@@ -423,14 +427,17 @@ export default function Shop() {
               setModalID(-1);
               customAxios
                 .get(
-                  `/api/shop/buy/background/${inputStr}?buyPictureId=${SelectItems.indexOf(
-                    SelectItems.find(
-                      (x) => (x.value as any) == (selectedOption.value as any)
-                    ) as {
-                      value: string;
-                      label: string;
-                    }
-                  )}`
+                  `/api/shop/buy/background/${inputStr}?buyPictureId=${
+                    (
+                      SelectItems.find(
+                        (x) => (x.value as any) == (selectedOption.value as any)
+                      ) as {
+                        value: string;
+                        label: string;
+                        idx: number;
+                      }
+                    ).idx
+                  }`
                 )
                 .then((v) => {
                   if (v.data.err) {
