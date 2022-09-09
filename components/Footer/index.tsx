@@ -37,9 +37,12 @@ export default function Footer() {
           <Grid>
             <div
               style={{
-                width: "5px",
+                marginLeft: "10px",
+                marginRight: "10px",
               }}
-            ></div>
+            >
+              |
+            </div>
           </Grid>
           <Grid>
             <Link href="https://github.com/oein/dioh">Github</Link>
