@@ -77,170 +77,185 @@ export default function MyHead() {
         background: `${theme?.colors.background.value}`,
         zIndex: "9999",
       }}
-      className="container"
     >
-      <Link href="/" style={{}}>
-        <h1
-          style={{
-            cursor: "pointer",
-          }}
-        >
-          Dioh
-        </h1>
-      </Link>
-      <div
+      <article
+        className="container"
         style={{
-          display: "inline-block",
-          position: "absolute",
-          right: "10px",
-          top: "50%",
-          transform: "translateY(-50%)",
-          color: `${theme?.colors.black.value}`,
+          position: "fixed",
+          top: "0px",
+          left: "0px",
+          right: "0px",
+          height: "76px",
+          padding: "7px",
+          paddingTop: "0px",
+          borderBottom: `1px solid ${theme?.colors.neutralBorder.value}`,
+          background: `${theme?.colors.background.value}`,
+          zIndex: "9999",
         }}
       >
-        <NoSSR>
-          {status == "loading" ? (
-            <div>Loading...</div>
-          ) : (
-            <>
-              <Grid.Container>
-                {/* Go to Admin Dashboard */}
-                {isAdmin ? (
-                  <Grid>
-                    <Link href="/admin">
+        <Link href="/" style={{}}>
+          <h1
+            style={{
+              cursor: "pointer",
+            }}
+          >
+            Dioh
+          </h1>
+        </Link>
+        <div
+          style={{
+            display: "inline-block",
+            position: "absolute",
+            right: "10px",
+            top: "50%",
+            transform: "translateY(-50%)",
+            color: `${theme?.colors.black.value}`,
+          }}
+        >
+          <NoSSR>
+            {status == "loading" ? (
+              <div>Loading...</div>
+            ) : (
+              <>
+                <Grid.Container>
+                  {/* Go to Admin Dashboard */}
+                  {isAdmin ? (
+                    <Grid>
+                      <Link href="/admin">
+                        <div
+                          style={{
+                            display: "inline-block",
+                            fontSize: "var(--nextui-fontSizes-md)",
+                            cursor: "pointer",
+                          }}
+                          className="centerH m768"
+                        >
+                          Admin-Dashboard
+                        </div>
+                      </Link>
+                    </Grid>
+                  ) : null}
+                  {isAdmin ? (
+                    <Grid>
                       <div
                         style={{
-                          display: "inline-block",
-                          fontSize: "var(--nextui-fontSizes-md)",
-                          cursor: "pointer",
+                          width: "8px",
                         }}
-                        className="centerH m768"
-                      >
-                        Admin-Dashboard
-                      </div>
-                    </Link>
+                        className="m768"
+                      ></div>
+                    </Grid>
+                  ) : null}
+                  {/* Profile Image */}
+                  <Grid>
+                    {status == "authenticated" ? (
+                      <Image
+                        showSkeleton
+                        alt="Your profile"
+                        src={`${session?.user?.image}`}
+                        width="40px"
+                        objectFit="contain"
+                        className="centerH m375"
+                        css={{
+                          display: "inline-block",
+                          borderRadius: "20px",
+                          border: "2px solid rgba(0,0,0,0.5)",
+                        }}
+                      />
+                    ) : null}
                   </Grid>
-                ) : null}
-                {isAdmin ? (
+                  {/* Profile Name */}
                   <Grid>
                     <div
                       style={{
                         width: "8px",
                       }}
-                      className="m768"
                     ></div>
                   </Grid>
-                ) : null}
-                {/* Profile Image */}
-                <Grid>
-                  {status == "authenticated" ? (
-                    <Image
-                      showSkeleton
-                      alt="Your profile"
-                      src={`${session?.user?.image}`}
-                      width="40px"
-                      objectFit="contain"
-                      className="centerH m375"
-                      css={{
-                        display: "inline-block",
-                        borderRadius: "20px",
-                        border: "2px solid rgba(0,0,0,0.5)",
-                      }}
-                    />
-                  ) : null}
-                </Grid>
-                {/* Profile Name */}
-                <Grid>
-                  <div
-                    style={{
-                      width: "8px",
-                    }}
-                  ></div>
-                </Grid>
-                <Grid>
-                  {status == "authenticated" ? (
-                    <div className="centerH">
-                      <Link
-                        style={{
-                          color: nameColor,
-                        }}
-                        href={`/user/${userName.split("#")[0]}/${
-                          userName.split("#")[1]
-                        }`}
-                      >
+                  <Grid>
+                    {status == "authenticated" ? (
+                      <div className="centerH">
+                        <Link
+                          style={{
+                            color: nameColor,
+                          }}
+                          href={`/user/${userName.split("#")[0]}/${
+                            userName.split("#")[1]
+                          }`}
+                        >
+                          <div
+                            style={{
+                              display: "inline-block",
+                              fontSize: "var(--nextui-fontSizes-xl)",
+                              color: nameColor,
+                              margin: "0px",
+                              padding: "0px",
+                              cursor: "pointer",
+                            }}
+                            className="font"
+                          >
+                            {userName}
+                          </div>
+                        </Link>
                         <div
                           style={{
-                            display: "inline-block",
-                            fontSize: "var(--nextui-fontSizes-xl)",
-                            color: nameColor,
                             margin: "0px",
                             padding: "0px",
-                            cursor: "pointer",
+                            transform:
+                              "translateY(calc(var(--nextui-fontSizes-md) * -1 + var(--nextui-fontSizes-sm) * 0.5))",
                           }}
                           className="font"
                         >
-                          {userName}
+                          Point:{" "}
+                          {point
+                            .toString()
+                            .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")}
+                          P
+                        </div>
+                      </div>
+                    ) : null}
+                  </Grid>
+                  {/* Sign In & Out */}
+                  <Grid>
+                    <div
+                      style={{
+                        width: "8px",
+                      }}
+                    ></div>
+                  </Grid>
+                  <Grid>
+                    {status == "authenticated" ? (
+                      <Link href="/api/auth/signout">
+                        <div
+                          style={{
+                            display: "inline-block",
+                            cursor: "pointer",
+                            fontSize: "var(--nextui-fontSizes-xl)",
+                          }}
+                          className="centerH"
+                        >
+                          Sign Out
                         </div>
                       </Link>
-                      <div
-                        style={{
-                          margin: "0px",
-                          padding: "0px",
-                          transform:
-                            "translateY(calc(var(--nextui-fontSizes-md) * -1 + var(--nextui-fontSizes-sm) * 0.5))",
-                        }}
-                        className="font"
-                      >
-                        Point:{" "}
-                        {point
-                          .toString()
-                          .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")}
-                        P
-                      </div>
-                    </div>
-                  ) : null}
-                </Grid>
-                {/* Sign In & Out */}
-                <Grid>
-                  <div
-                    style={{
-                      width: "8px",
-                    }}
-                  ></div>
-                </Grid>
-                <Grid>
-                  {status == "authenticated" ? (
-                    <Link href="/api/auth/signout">
-                      <div
-                        style={{
-                          display: "inline-block",
-                          cursor: "pointer",
-                          fontSize: "var(--nextui-fontSizes-xl)",
-                        }}
-                        className="centerH"
-                      >
-                        Sign Out
-                      </div>
-                    </Link>
-                  ) : (
-                    <Link href="/api/auth/signin">
-                      <div
-                        style={{
-                          cursor: "pointer",
-                          fontSize: "var(--nextui-fontSizes-xl3)",
-                        }}
-                        className="centerH"
-                      >
-                        Sign In
-                      </div>
-                    </Link>
-                  )}
-                </Grid>
-              </Grid.Container>
-            </>
-          )}
-        </NoSSR>
-      </div>
+                    ) : (
+                      <Link href="/api/auth/signin">
+                        <div
+                          style={{
+                            cursor: "pointer",
+                            fontSize: "var(--nextui-fontSizes-xl3)",
+                          }}
+                          className="centerH"
+                        >
+                          Sign In
+                        </div>
+                      </Link>
+                    )}
+                  </Grid>
+                </Grid.Container>
+              </>
+            )}
+          </NoSSR>
+        </div>
+      </article>
     </div>
   );
 }
