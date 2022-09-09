@@ -4,3 +4,4 @@ const backgroundImgURLS = [
 ];
 
 export default backgroundImgURLS;
+export const backgroundNames = ["기본 배경", "와일드뀨라임"];
