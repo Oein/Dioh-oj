@@ -54,7 +54,20 @@ export default function Mypage() {
       </div>
       <MyHead />
       <article className="container">
-        <div>
+        <div
+          style={{
+            padding: "20px",
+            borderRadius: "20px",
+            backgroundRepeat: "no-repeat",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            border: "1px var(--nextui-colors-accents3) solid",
+            boxShadow: "var(--nextui-shadows-md)",
+            marginBottom: "30px",
+            backgroundImage:
+              "url(https://cdn.discordapp.com/attachments/1017382361618456587/1017603918789885982/unknown.png)",
+          }}
+        >
           <Grid.Container>
             <Grid>
               <Image
