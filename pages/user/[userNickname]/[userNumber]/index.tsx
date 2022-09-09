@@ -6,10 +6,7 @@ import MyHead from "../../../../components/head";
 import { uid } from "uid";
 import User from "../../../../types/user";
 import { useSession } from "next-auth/react";
-
-let backgroundImgURLS = [
-  "https://cdn.discordapp.com/attachments/1017382361618456587/1017603918789885982/unknown.png",
-];
+import backgroundImgURLS from "../../../../util/backgroundImgURLS";
 
 export default function Mypage() {
   let [user, setUser] = useState<User>({
