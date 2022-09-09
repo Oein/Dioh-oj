@@ -6,12 +6,29 @@ import { useRouter } from "next/router";
 import { toast } from "react-toastify";
 import { uid } from "uid";
 
+import Select from "react-select";
+import backgroundImgURLS, {
+  backgroundNames,
+} from "../../util/backgroundImgURLS";
+
 import "react-color-palette/lib/css/styles.css";
 
 import MyHead from "../../components/head";
 import MyFooter from "../../components/footer";
 import customAxios from "../../util/customAxios";
 import Load from "../../components/Loading/index";
+
+let SelectItems: {
+  value: string;
+  label: string;
+}[] = [];
+
+for (let i = 0; i < backgroundImgURLS.length; i++) {
+  SelectItems.push({
+    value: backgroundImgURLS[i],
+    label: backgroundNames[i] || "프로필 배경",
+  });
+}
 
 interface ItemType {
   name: string;
@@ -34,6 +51,11 @@ const Items: ItemType[] = [
     name: "태그 번호 변경",
     point: 100,
     imageUrl: "/images/tag.svg",
+  },
+  {
+    name: "프로필 배경",
+    point: 75,
+    imageUrl: "/",
   },
 ];
 
@@ -120,6 +142,8 @@ export default function Shop() {
   let [inputStr, setInputStr] = useState("");
   // force refresh
   let [forceREF, forceREF__] = useState("");
+  // Background image
+  let [selectedOption, setSelectedOption] = useState(SelectItems[0]);
 
   let [loading, load] = useState(false);
   let session = useSession();
@@ -331,6 +355,83 @@ export default function Shop() {
               setModalID(-1);
               customAxios
                 .get(`/api/user/update/tag/${inputStr}`)
+                .then((v) => {
+                  if (v.data.err) {
+                    toast(`Err occured / ${v.data.err}`, { type: "error" });
+                  }
+                  if (v.data.suc) {
+                    toast(`${v.data.suc}`, { type: "success" });
+                  }
+                })
+                .catch((e) => {
+                  toast(`Err occured / ${e}`, { type: "error" });
+                })
+                .finally(() => {
+                  load(false);
+                });
+            }}
+          >
+            구매
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      {/* 배경 구매 */}
+      <Modal open={modalID == 3} onClose={() => setModalID(-1)}>
+        <Modal.Header>
+          <div
+            style={{
+              fontSize: "var(--nextui-fontSizes-xl)",
+            }}
+          >
+            Buy Profile Background
+          </div>
+        </Modal.Header>
+        <Modal.Body>
+          <div
+            style={{
+              minHeight: "30vh",
+            }}
+          >
+            <Select
+              options={SelectItems}
+              defaultValue={selectedOption}
+              onChange={(e: any) => {
+                setSelectedOption(e);
+              }}
+            />
+            <Image
+              showSkeleton
+              src={selectedOption.value}
+              width="100%"
+              alt="Example Background"
+              objectFit="cover"
+              css={{
+                width: "100%",
+                borderRadius: "5px",
+                marginTop: "10px",
+                border: "var(--nextui-colors-accents1) 1px solid",
+              }}
+            />
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            color="success"
+            onClick={() => {
+              load(true);
+              setModalID(-1);
+              customAxios
+                .get(
+                  `/api/shop/buy/background/${inputStr}?buyPictureId=${SelectItems.indexOf(
+                    SelectItems.find(
+                      (x) => (x.value as any) == (selectedOption.value as any)
+                    ) as {
+                      value: string;
+                      label: string;
+                    }
+                  )}`
+                )
                 .then((v) => {
                   if (v.data.err) {
                     toast(`Err occured / ${v.data.err}`, { type: "error" });
