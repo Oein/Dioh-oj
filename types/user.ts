@@ -12,4 +12,6 @@ export default interface User {
   nickName: string;
   permission: string[];
   solvedProblems: string[];
+  UserBackgroundImgIndex: number;
+  HavingBackgroundImgIndexes: number[];
 }
