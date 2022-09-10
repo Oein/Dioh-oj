@@ -13,6 +13,7 @@ import { useEffect } from "react";
 import Router from "next/router";
 import NProgress from "nprogress";
 import "nprogress/nprogress.css";
+import Script from "next/script";
 
 const darkTheme = createTheme({
   type: "light",
@@ -89,6 +90,13 @@ function MyApp({ Component, pageProps }: AppProps) {
                 ></meta>
                 <meta property="og:title" content="Dioh"></meta>
               </Head>
+              <Script
+                async
+                crossOrigin="anonymous"
+                id="adsense"
+                strategy="afterInteractive"
+                src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7648972371680937"
+              />
               <Component {...pageProps} />
             </div>
           </NextUIProvider>
