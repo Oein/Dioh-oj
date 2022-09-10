@@ -1,6 +1,18 @@
 import { Grid, Link, Text } from "@nextui-org/react";
+import { useEffect } from "react";
+
+declare let adsbygoogle: any;
 
 export default function Footer() {
+  useEffect(() => {
+    var ads = document.getElementsByClassName("adsbygoogle").length;
+    for (var i = 0; i < ads; i++) {
+      try {
+        (adsbygoogle = (window as any).adsbygoogle || []).push({});
+      } catch (e) {}
+    }
+  }, []);
+
   return (
     <footer
       style={{
@@ -78,17 +90,15 @@ export default function Footer() {
                 minWidth: "calc(50vw)",
                 width: "100%",
                 height: "87px",
-                paddingTop: "15px",
-                background: "white",
-                position: "relative",
-                top: "50%",
-                transform: "translateY(-30%)",
               }}
             >
               <ins
                 className="adsbygoogle"
                 style={{
                   display: "block",
+                  minWidth: "calc(50vw)",
+                  width: "100%",
+                  height: "87px",
                 }}
                 data-ad-client="ca-pub-7648972371680937"
                 data-ad-slot="5682770890"
