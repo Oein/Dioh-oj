@@ -159,7 +159,8 @@ export default function SubmitStatus() {
       .finally(() => {
         load(false);
       });
-  }, [cursor, query.idx, submits2]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query.idx]);
 
   return (
     <>
