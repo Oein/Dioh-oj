@@ -89,6 +89,11 @@ function MyApp({ Component, pageProps }: AppProps) {
                   content="Dioh is a online judge website for who enjoies coding."
                 ></meta>
                 <meta property="og:title" content="Dioh"></meta>
+
+                <meta
+                  name="google-site-verification"
+                  content="axAJTWFc4-IbKQBDijFtNzJmNMfBbbrQLMcy4VdKA4g"
+                />
               </Head>
               <Script
                 async
