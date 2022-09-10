@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Link, Table } from "@nextui-org/react";
+import { Button, Link, Table, Input, Grid } from "@nextui-org/react";
 import MyHead from "../../components/head";
 import { RealtimeClient } from "@supabase/realtime-js";
 import { SourceCode } from "@prisma/client";
@@ -23,7 +23,8 @@ export default function SubmitStatus() {
   let [temp__________, temp__________s] = useState("");
   let [loading, load] = useState(false);
   let [cursor, setCursor] = useState("");
-
+  let [input_1, setI1] = useState("");
+  let [input_2, setI2] = useState("");
   let router = useRouter();
   let query = router.query;
 
@@ -117,6 +118,41 @@ export default function SubmitStatus() {
       forceRefresh();
     }, 1000);
 
+    setI1((query.problem as string) || "");
+    setI2(((query.user as string) || "").replace(".-.", "#"));
+
+    console.log("Problem is " + query.problem);
+    console.log("User is " + query.user);
+
+    load(true);
+    if (cursor == "" && submits.length > 0) {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      cursor = submits[submits.length - 1].id;
+    }
+    axios
+      .get(
+        `/api/submitstatus/get?cursor=${cursor}&problem=${query.problem}&user=${query.user}`
+      )
+      .then((v) => {
+        if (v.data.length == 0) {
+          return;
+        }
+        if (v.data.err) {
+          return;
+        }
+        console.log(v.data);
+        setCursor(v.data[v.data.length - 1].id);
+        setSubmits2(submits2.concat(v.data));
+      })
+      .catch((err) => {
+        toast(`Err / ${err}`, {
+          type: "error",
+        });
+      })
+      .finally(() => {
+        load(false);
+      });
+
     return () => {
       clearInterval(inter);
     };
@@ -134,6 +170,47 @@ export default function SubmitStatus() {
       </div>
       <MyHead />
       <article className="container">
+        <Grid.Container
+          style={{
+            marginBottom: "10px",
+          }}
+        >
+          <Grid xs={4}>
+            <Input
+              labelPlaceholder="문제 번호"
+              value={input_1}
+              fullWidth
+              onChange={(e) => {
+                setI1(e.target.value);
+              }}
+            />
+          </Grid>
+          <Grid xs={4}>
+            <Input
+              labelPlaceholder="유저 이름"
+              value={input_2}
+              fullWidth
+              onChange={(e) => {
+                setI2(e.target.value);
+              }}
+            />
+          </Grid>
+          <Grid>
+            <Button
+              auto
+              onClick={() => {
+                router.push(
+                  `/submitstatus?problem=${input_1}&user=${input_2.replace(
+                    "#",
+                    ".-."
+                  )}`
+                );
+              }}
+            >
+              검색
+            </Button>
+          </Grid>
+        </Grid.Container>
         <Table>
           <Table.Header>
             <Table.Column>제출 번호</Table.Column>
@@ -189,11 +266,21 @@ export default function SubmitStatus() {
               cursor = submits[submits.length - 1].id;
             }
             axios
-              .get(`/api/submitstatus/get?cursor=${cursor}`)
+              .get(
+                `/api/submitstatus/get?cursor=${cursor}&problem=${
+                  query.problem
+                }&user=${(query.user as string) || ""}`
+              )
               .then((v) => {
                 if (v.data.length == 0) {
                   toast("No more data to load", {
                     type: "warning",
+                  });
+                  return;
+                }
+                if (v.data.err) {
+                  toast(`ERR / ${v.data.err}`, {
+                    type: "error",
                   });
                   return;
                 }

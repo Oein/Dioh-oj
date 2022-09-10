@@ -12,6 +12,26 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     } = {};
 
     let cursor = req.query.cursor;
+    let user = ((req.query.user as string) || "").replace(".-.", "#");
+
+    let userFindWhere = undefined;
+
+    if (user) {
+      let x = await prisma.user.findFirst({
+        where: {
+          nickName: user,
+        },
+      });
+      if (x == null) {
+        res.send({
+          err: "User not found.",
+        });
+        resolve();
+        return;
+      }
+      userFindWhere = x.id;
+    }
+
     let problem = req.query.problem as string;
     if (cursor == undefined || cursor == null) {
       res.send(
@@ -34,6 +54,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         },
         where: {
           problem: problem,
+          user: userFindWhere,
         },
         skip: 1,
         take: 30,
@@ -45,6 +66,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         },
         where: {
           problem: problem,
+          user: userFindWhere,
         },
         skip: 0,
         take: 30,
