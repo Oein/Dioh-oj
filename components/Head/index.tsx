@@ -104,6 +104,7 @@ export default function MyHead() {
             style={{
               cursor: "pointer",
             }}
+            className="fontX"
           >
             Dioh
           </h1>

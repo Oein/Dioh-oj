@@ -27,7 +27,7 @@ export default function Footer() {
           <Grid>
             <Grid.Container>
               <Grid>
-                <Text size="$4xl" className="">
+                <Text size="$4xl" className="fontX">
                   Dioh
                 </Text>
               </Grid>
