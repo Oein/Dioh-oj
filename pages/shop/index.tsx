@@ -59,7 +59,7 @@ const Items: ItemType[] = [
   {
     name: "프로필 배경",
     point: 50,
-    imageUrl: "/",
+    imageUrl: "/images/pb.svg",
   },
 ];
 
