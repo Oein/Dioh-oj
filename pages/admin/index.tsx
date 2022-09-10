@@ -1,6 +1,6 @@
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import { Navbar, Text } from "@nextui-org/react";
+import { Link, Navbar, Text } from "@nextui-org/react";
 import { Dispatch, SetStateAction, useState } from "react";
 
 import update from "../../components/Admin/update";
