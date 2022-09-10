@@ -2,6 +2,7 @@ import NextAuth from "next-auth";
 import GithubProvider from "next-auth/providers/github";
 import NaverProvider from "next-auth/providers/naver";
 import DiscordProvider from "next-auth/providers/discord";
+import GoogleProvider from "next-auth/providers/google";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { prisma } from "../../../util/prisma";
 
@@ -37,6 +38,10 @@ export default NextAuth({
     DiscordProvider({
       clientId: process.env.DISCORD_ID as string,
       clientSecret: process.env.DISCORD_SECRET as string,
+    }),
+    GoogleProvider({
+      clientId: process.env.GOOGLE_ID as string,
+      clientSecret: process.env.GOOGLE_SECRET as string,
     }),
   ],
   callbacks: {
