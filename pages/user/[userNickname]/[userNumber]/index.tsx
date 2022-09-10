@@ -164,6 +164,9 @@ export default function Mypage() {
                     toast(`${v.data.suc}`, {
                       type: "success",
                     });
+                    toast("You should refresh the page to see the changes.", {
+                      type: "info",
+                    });
                   }
                 })
                 .catch((e) => {
