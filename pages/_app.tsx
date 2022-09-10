@@ -7,13 +7,11 @@ import { SessionProvider } from "next-auth/react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import NoSSR from "react-no-ssr";
-import Head from "next/head";
 
 import { useEffect } from "react";
 import Router from "next/router";
 import NProgress from "nprogress";
 import "nprogress/nprogress.css";
-import Script from "next/script";
 
 const darkTheme = createTheme({
   type: "light",
@@ -77,30 +75,6 @@ function MyApp({ Component, pageProps }: AppProps) {
                 pauseOnFocusLoss={false}
                 draggable
                 pauseOnHover
-              />
-              <Head>
-                <meta
-                  name="viewport"
-                  content="viewport-fit=cover,width=device-width,"
-                />
-                <meta name="author" content="Oein , Dina"></meta>
-                <meta
-                  name="description"
-                  content="Dioh is a online judge website for who enjoies coding."
-                ></meta>
-                <meta property="og:title" content="Dioh"></meta>
-
-                <meta
-                  name="google-site-verification"
-                  content="axAJTWFc4-IbKQBDijFtNzJmNMfBbbrQLMcy4VdKA4g"
-                />
-              </Head>
-              <Script
-                async
-                crossOrigin="anonymous"
-                id="adsense"
-                strategy="lazyOnload"
-                src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7648972371680937"
               />
               <Component {...pageProps} />
             </div>
