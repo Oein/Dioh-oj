@@ -3,6 +3,7 @@ const backgroundImgURLS = [
   "/backgrounds/1.svg",
   "/backgrounds/2.svg",
   "/backgrounds/3.svg",
+  "/backgrounds/4.svg",
 ];
 
 export default backgroundImgURLS;
@@ -11,5 +12,6 @@ export const backgroundNames = [
   "와일드뀨라임",
   "XP",
   "SungHyun#0219의 배경",
+  "SDnight5#7447의 배경",
 ];
-export const ignoreIDX = [0, 3];
+export const ignoreIDX = [0, 3, 4];
