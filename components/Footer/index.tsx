@@ -87,7 +87,7 @@ export default function Footer() {
             <div
               className="m768"
               style={{
-                minWidth: "calc(50vw)",
+                minWidth: "calc(40vw)",
                 width: "100%",
                 height: "87px",
               }}
@@ -96,7 +96,7 @@ export default function Footer() {
                 className="adsbygoogle"
                 style={{
                   display: "block",
-                  minWidth: "calc(50vw)",
+                  minWidth: "calc(40vw)",
                   width: "100%",
                   height: "87px",
                 }}
