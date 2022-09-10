@@ -74,11 +74,7 @@ export default function Footer() {
                 data-full-width-responsive="true"
               ></ins>
               <script>
-                {`
-                window.onload = function() {
-                  (adsbygoogle = window.adsbygoogle || []).push({});
-                }
-                `}
+                (adsbygoogle = window.adsbygoogle || []).push({});
               </script>
             </div>
           </Grid>
