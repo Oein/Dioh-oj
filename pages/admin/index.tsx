@@ -27,6 +27,8 @@ export interface prop {
   setBody: Dispatch<SetStateAction<string>>;
   loading: boolean;
   load: Dispatch<SetStateAction<boolean>>;
+  originalNumber: number;
+  setOriginalNumber: Dispatch<SetStateAction<number>>;
 }
 
 export interface SubPage {
@@ -46,6 +48,7 @@ export default function AdminPannel() {
   let [time, setTime] = useState(1000);
   let [name, setName] = useState("");
   let [loading, setLoading] = useState(false);
+  let [originalNumber, setOriginalNumber] = useState(0);
   let [monaco, setMonaco] = useState(`[
   [
       
@@ -138,6 +141,8 @@ export default function AdminPannel() {
           setBody: setBody,
           loading: loading,
           load: setLoading,
+          originalNumber: originalNumber,
+          setOriginalNumber: setOriginalNumber,
         })}
       </div>
     );

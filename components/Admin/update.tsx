@@ -60,6 +60,14 @@ let update: SubPage = {
         >
           &nbsp;
         </p>
+        <p>Original Problem Number : {prop.originalNumber}</p>
+        <p
+          style={{
+            fontSize: "20px",
+          }}
+        >
+          &nbsp;
+        </p>
         <Grid.Container>
           <Grid xs={9}>
             <Input
@@ -79,6 +87,7 @@ let update: SubPage = {
               auto
               onPress={() => {
                 prop.load(true);
+                prop.setOriginalNumber(prop.idx);
                 customAxios
                   .get(`/api/problems/get/full/${prop.idx}`)
                   .then((v) => {
@@ -399,7 +408,7 @@ let update: SubPage = {
         <Button
           onPress={() => {
             prop.load(true);
-            axios(`/api/problems/create/${prop.session.data?.user.id}`, {
+            axios(`/api/problems/update/${prop.session.data?.user.id}`, {
               params: {
                 name: prop.name,
                 time: prop.time,
@@ -408,6 +417,7 @@ let update: SubPage = {
                 id: prop.idx,
                 testcase: prop.monaco,
                 body: prop.body,
+                original: prop.originalNumber,
               },
             })
               .then((v) => {
