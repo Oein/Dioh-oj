@@ -5,6 +5,7 @@ import { Dispatch, SetStateAction, useState } from "react";
 
 import update from "../../components/Admin/update";
 import create from "../../components/Admin/create";
+import Load from "../../components/Loading";
 
 export interface prop {
   name: string;
@@ -24,6 +25,8 @@ export interface prop {
   setMonaco2: Dispatch<SetStateAction<string>>;
   body: string;
   setBody: Dispatch<SetStateAction<string>>;
+  loading: boolean;
+  load: Dispatch<SetStateAction<boolean>>;
 }
 
 export interface SubPage {
@@ -42,6 +45,7 @@ export default function AdminPannel() {
   let [point, setPoint] = useState(1);
   let [time, setTime] = useState(1000);
   let [name, setName] = useState("");
+  let [loading, setLoading] = useState(false);
   let [monaco, setMonaco] = useState(`[
   [
       
@@ -78,6 +82,7 @@ export default function AdminPannel() {
           marginTop: "-76px",
         }}
       >
+        {loading ? <Load /> : null}
         <Navbar
           isCompact
           isBordered
@@ -131,6 +136,8 @@ export default function AdminPannel() {
           setMonaco2: setMonaco2,
           body: body,
           setBody: setBody,
+          loading: loading,
+          load: setLoading,
         })}
       </div>
     );

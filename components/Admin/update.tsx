@@ -15,6 +15,7 @@ import { HeadingComponent } from "react-markdown/lib/ast-to-react";
 
 import { toast } from "react-toastify";
 import { SubPage } from "../../pages/admin";
+import customAxios from "../../util/customAxios";
 
 const markdownH3: HeadingComponent = ({ children, ...props }) => {
   return (
@@ -59,17 +60,51 @@ let update: SubPage = {
         >
           &nbsp;
         </p>
-        <Input
-          labelPlaceholder="Problem Number"
-          type="number"
-          min="1"
-          max="2147483647"
-          fullWidth
-          value={prop.idx}
-          onChange={(e) => {
-            prop.setIDX(parseInt(e.target.value));
-          }}
-        />
+        <Grid.Container>
+          <Grid xs={9}>
+            <Input
+              labelPlaceholder="Problem Number"
+              type="number"
+              min="1"
+              max="2147483647"
+              fullWidth
+              value={prop.idx}
+              onChange={(e) => {
+                prop.setIDX(parseInt(e.target.value));
+              }}
+            />
+          </Grid>
+          <Grid xs={3}>
+            <Button
+              auto
+              onPress={() => {
+                prop.load(true);
+                customAxios
+                  .get(`/api/problems/get/full/${prop.idx}`)
+                  .then((v) => {
+                    if (v.data.err) {
+                      toast(`ERR / ${v.data.err}`, {
+                        type: "error",
+                      });
+                      return;
+                    }
+                    console.log(v.data);
+                    prop.setBody(v.data.body);
+                    prop.setPoint(v.data.point);
+                    prop.setName(v.data.name);
+                    prop.setTime(v.data.maxTime);
+                    prop.setMonaco(JSON.stringify(v.data.testCase, null, 2));
+                    prop.setMemory(v.data.maxMemoryMB);
+                  })
+                  .finally(() => {
+                    prop.load(false);
+                  });
+              }}
+            >
+              Load This Problem
+            </Button>
+          </Grid>
+        </Grid.Container>
 
         {/* Problem Time */}
         <p
@@ -363,6 +398,7 @@ let update: SubPage = {
         {/* Problem Create Button */}
         <Button
           onPress={() => {
+            prop.load(true);
             axios(`/api/problems/create/${prop.session.data?.user.id}`, {
               params: {
                 name: prop.name,
@@ -373,22 +409,26 @@ let update: SubPage = {
                 testcase: prop.monaco,
                 body: prop.body,
               },
-            }).then((v) => {
-              let res = v.data;
-              if (res.err) {
-                toast(res.err, {
-                  type: "error",
-                });
-              }
-              if (res.suc) {
-                toast(res.suc, {
-                  type: "success",
-                });
-              }
-            });
+            })
+              .then((v) => {
+                let res = v.data;
+                if (res.err) {
+                  toast(res.err, {
+                    type: "error",
+                  });
+                }
+                if (res.suc) {
+                  toast(res.suc, {
+                    type: "success",
+                  });
+                }
+              })
+              .finally(() => {
+                prop.load(false);
+              });
           }}
         >
-          Create
+          Update
         </Button>
 
         {/* css */}

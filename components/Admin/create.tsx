@@ -363,6 +363,7 @@ let create: SubPage = {
         {/* Problem Create Button */}
         <Button
           onPress={() => {
+            prop.load(true);
             axios(`/api/problems/create/${prop.session.data?.user.id}`, {
               params: {
                 name: prop.name,
@@ -373,19 +374,23 @@ let create: SubPage = {
                 testcase: prop.monaco,
                 body: prop.body,
               },
-            }).then((v) => {
-              let res = v.data;
-              if (res.err) {
-                toast(res.err, {
-                  type: "error",
-                });
-              }
-              if (res.suc) {
-                toast(res.suc, {
-                  type: "success",
-                });
-              }
-            });
+            })
+              .then((v) => {
+                let res = v.data;
+                if (res.err) {
+                  toast(res.err, {
+                    type: "error",
+                  });
+                }
+                if (res.suc) {
+                  toast(res.suc, {
+                    type: "success",
+                  });
+                }
+              })
+              .finally(() => {
+                prop.load(false);
+              });
           }}
         >
           Create
