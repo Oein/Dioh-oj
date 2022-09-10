@@ -148,19 +148,26 @@ export default function MyHead() {
                   {/* Profile Image */}
                   <Grid>
                     {status == "authenticated" ? (
-                      <Image
-                        showSkeleton
-                        alt="Your profile"
-                        src={`${session?.user?.image}`}
-                        width="40px"
-                        objectFit="contain"
-                        className="centerH m375"
-                        css={{
-                          display: "inline-block",
-                          borderRadius: "20px",
-                          border: "2px solid rgba(0,0,0,0.5)",
-                        }}
-                      />
+                      <Link
+                        href={`/user/${userName.split("#")[0]}/${
+                          userName.split("#")[1]
+                        }`}
+                      >
+                        <Image
+                          showSkeleton
+                          alt="Your profile"
+                          src={`${session?.user?.image}`}
+                          width="40px"
+                          objectFit="contain"
+                          className="centerH"
+                          css={{
+                            display: "inline-block",
+                            borderRadius: "20px",
+                            border: "2px solid rgba(0,0,0,0.5)",
+                            cursor: "pointer",
+                          }}
+                        />
+                      </Link>
                     ) : null}
                   </Grid>
                   {/* Profile Name */}
@@ -173,7 +180,7 @@ export default function MyHead() {
                   </Grid>
                   <Grid>
                     {status == "authenticated" ? (
-                      <div className="centerH">
+                      <div className="centerH m375">
                         <Link
                           style={{
                             color: nameColor,
