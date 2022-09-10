@@ -199,12 +199,16 @@ export default function SubmitStatus() {
             <Button
               auto
               onClick={() => {
-                router.push(
-                  `/submitstatus?problem=${input_1}&user=${input_2.replace(
-                    "#",
-                    ".-."
-                  )}`
-                );
+                router
+                  .push(
+                    `/submitstatus?problem=${input_1}&user=${input_2.replace(
+                      "#",
+                      ".-."
+                    )}`
+                  )
+                  .then(() => {
+                    router.reload();
+                  });
               }}
             >
               검색
