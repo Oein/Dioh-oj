@@ -186,7 +186,7 @@ export default function Mypage() {
       <article className="container">
         <Grid.Container
           style={{
-            transform: "translateY(-50%)",
+            transform: "translateY(-35%)",
           }}
         >
           <Grid>
