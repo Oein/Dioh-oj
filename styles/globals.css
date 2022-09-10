@@ -108,3 +108,14 @@ code {
     display: none !important;
   }
 }
+
+.adsbygoogle,
+.adsbygoogle > div,
+.adsbygoogle > div > iframe {
+  max-height: 100px !important;
+}
+
+.adsbygoogle {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
