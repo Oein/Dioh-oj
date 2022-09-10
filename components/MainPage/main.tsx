@@ -25,6 +25,7 @@ export default function Main() {
                 left: "50%",
                 transform: "translateX(-50%)",
               }}
+              className="fontX"
             >
               Dioh / 디오
             </div>
@@ -32,6 +33,7 @@ export default function Main() {
               style={{
                 fontSize: "var(--nextui-fontSizes-md)",
               }}
+              className="fontX"
             >
               Dina and Oein&apos;s online judge
             </div>
