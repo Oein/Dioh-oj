@@ -69,7 +69,7 @@ export default function MD(props: { text: string }) {
           h1: markdownH3,
           h3: markdownH3,
           p: ({ children }) => {
-            return <p className="font">{children}</p>;
+            return <p className="">{children}</p>;
           },
         }}
       >

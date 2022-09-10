@@ -26,7 +26,7 @@ export default function ShortCuts() {
                   fontSize: "var(--nextui-fontSizes-xl)",
                   cursor: "pointer",
                 }}
-                className="font centerH"
+                className=" centerH"
               >
                 문제 목록
               </div>
@@ -54,7 +54,7 @@ export default function ShortCuts() {
                   fontSize: "var(--nextui-fontSizes-xl)",
                   cursor: "pointer",
                 }}
-                className="font centerH"
+                className=" centerH"
               >
                 메타행 버스타기
               </div>
@@ -82,7 +82,7 @@ export default function ShortCuts() {
                   fontSize: "var(--nextui-fontSizes-xl)",
                   cursor: "pointer",
                 }}
-                className="font centerH"
+                className=" centerH"
               >
                 상점
               </div>
@@ -116,7 +116,7 @@ export default function ShortCuts() {
                   fontSize: "var(--nextui-fontSizes-xl)",
                   cursor: "pointer",
                 }}
-                className="font centerH"
+                className=" centerH"
               >
                 제출현황
               </div>

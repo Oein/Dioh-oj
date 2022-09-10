@@ -60,7 +60,7 @@ export default function Problems() {
             />
           </Grid>
           <Grid>
-            <Text size="xx-large" className="font centerH">
+            <Text size="xx-large" className=" centerH">
               {parseInt(pageIdx as string) + 1}번째 페이지
             </Text>
           </Grid>

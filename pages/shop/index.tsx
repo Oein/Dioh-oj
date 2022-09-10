@@ -88,7 +88,7 @@ const Item = ({
     >
       <Image showSkeleton width="70%" src={imageURL} alt="Item image" />
       <Text
-        className="font"
+        className=""
         style={{
           fontSize: "var(--nextui-fontSizes-md)",
         }}

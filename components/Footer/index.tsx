@@ -27,14 +27,14 @@ export default function Footer() {
           <Grid>
             <Grid.Container>
               <Grid>
-                <Text size="$4xl" className="font">
+                <Text size="$4xl" className="">
                   Dioh
                 </Text>
               </Grid>
               <Grid>
                 <Text
                   size="$sm"
-                  className="font centerH m425"
+                  className=" centerH m425"
                   style={{
                     marginLeft: "5px",
                     color: "var(--nextui-colors-accents7)",

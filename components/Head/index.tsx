@@ -204,7 +204,7 @@ export default function MyHead() {
                               padding: "0px",
                               cursor: "pointer",
                             }}
-                            className="font"
+                            className=""
                           >
                             {userName}
                           </div>
@@ -216,7 +216,7 @@ export default function MyHead() {
                             transform:
                               "translateY(calc(var(--nextui-fontSizes-md) * -1 + var(--nextui-fontSizes-sm) * 0.5))",
                           }}
-                          className="font"
+                          className=""
                         >
                           Point: {formatNumber(point)}P
                         </div>
