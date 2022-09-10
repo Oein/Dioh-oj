@@ -32,7 +32,12 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       userFindWhere = x.id;
     }
 
-    let problem = req.query.problem as string;
+    let problem = undefined;
+
+    if (typeof req.query.problem == "string" && req.query.problem.length > 0) {
+      problem = req.query.problem;
+    }
+
     if (cursor == undefined || cursor == null) {
       res.send(
         JSON.stringify({
