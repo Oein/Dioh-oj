@@ -24,6 +24,7 @@ export default function Main() {
                 position: "relative",
                 left: "50%",
                 transform: "translateX(-50%)",
+                fontSize: "var(--nextui-fontSizes-lg)",
               }}
               className="fontX"
             >
@@ -35,7 +36,7 @@ export default function Main() {
               }}
               className="fontX"
             >
-              Dina and Oein&apos;s online judge
+              Infinity develop, infinity solve
             </div>
           </div>
         </header>
