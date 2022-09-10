@@ -94,7 +94,7 @@ function MyApp({ Component, pageProps }: AppProps) {
                 async
                 crossOrigin="anonymous"
                 id="adsense"
-                strategy="afterInteractive"
+                strategy="lazyOnload"
                 src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7648972371680937"
               />
               <Component {...pageProps} />
