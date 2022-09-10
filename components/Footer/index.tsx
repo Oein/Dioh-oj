@@ -79,24 +79,7 @@ export default function Footer() {
                 height: "87px",
                 paddingTop: "15px",
               }}
-            >
-              <ins
-                className="adsbygoogle"
-                style={{
-                  display: "block",
-                  minWidth: "450px",
-                  height: "87px",
-                  width: "100%",
-                }}
-                data-ad-client="ca-pub-7648972371680937"
-                data-ad-slot="5682770890"
-                data-ad-format="auto"
-                data-full-width-responsive="true"
-              ></ins>
-              <script>
-                (adsbygoogle = window.adsbygoogle || []).push({});
-              </script>
-            </div>
+            ></div>
           </Grid>
         </Grid.Container>
       </article>
