@@ -34,7 +34,11 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 
     let problem = undefined;
 
-    if (typeof req.query.problem == "string" && req.query.problem.length > 0) {
+    if (
+      req.query.problem &&
+      typeof req.query.problem == "string" &&
+      req.query.problem.length > 0
+    ) {
       problem = req.query.problem;
     }
 
