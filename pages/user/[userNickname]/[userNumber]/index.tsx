@@ -290,7 +290,7 @@ export default function Mypage() {
               padding: "10px",
             }}
           >
-            {(user.solvedProblems || []).map((v, idx) => {
+            {(user.solvedProblems || []).sort().map((v, idx) => {
               return (
                 <Link
                   href={`/problem/${v}`}
