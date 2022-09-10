@@ -57,6 +57,7 @@ export default function Footer() {
               style={{
                 width: "100%",
                 height: "87px",
+                paddingTop: "15px",
               }}
             >
               <ins
