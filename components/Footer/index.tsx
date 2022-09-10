@@ -53,6 +53,13 @@ export default function Footer() {
           </Grid>
           <Grid>
             <div
+              style={{
+                width: "5px",
+              }}
+            ></div>
+          </Grid>
+          <Grid>
+            <div
               className="m768"
               style={{
                 width: "100%",
