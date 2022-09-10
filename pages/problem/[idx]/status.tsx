@@ -139,6 +139,28 @@ export default function SubmitStatus() {
     };
   }, [query.idx, query.problem, query.user, submits]);
 
+  useEffect(() => {
+    load(true);
+    axios
+      .get(`/api/submitstatus/get?cursor=${cursor}&problem=${query.idx}`)
+      .then((v) => {
+        if (v.data.length == 0) {
+          return;
+        }
+        console.log(v.data);
+        setCursor(v.data[v.data.length - 1].id);
+        setSubmits2(submits2.concat(v.data));
+      })
+      .catch((err) => {
+        toast(`Err / ${err}`, {
+          type: "error",
+        });
+      })
+      .finally(() => {
+        load(false);
+      });
+  }, [cursor, query.idx, submits2]);
+
   return (
     <>
       {loading ? <Load /> : null}
