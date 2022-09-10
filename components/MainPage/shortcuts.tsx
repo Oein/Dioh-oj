@@ -109,7 +109,7 @@ export default function ShortCuts() {
             </div>
           </Grid>
           <Grid>
-            <Link href="/submitstatus/">
+            <Link href="/submitstatus?problem=&user=">
               <div
                 style={{
                   color: "var(--nextui-colors-text)",
