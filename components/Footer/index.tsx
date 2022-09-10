@@ -75,11 +75,30 @@ export default function Footer() {
             <div
               className="m768"
               style={{
+                minWidth: "calc(50vw)",
                 width: "100%",
                 height: "87px",
                 paddingTop: "15px",
+                background: "white",
+                position: "relative",
+                top: "50%",
+                transform: "translateY(-30%)",
               }}
-            ></div>
+            >
+              <ins
+                className="adsbygoogle"
+                style={{
+                  display: "block",
+                }}
+                data-ad-client="ca-pub-7648972371680937"
+                data-ad-slot="5682770890"
+                data-ad-format="auto"
+                data-full-width-responsive="true"
+              ></ins>
+              <script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+              </script>
+            </div>
           </Grid>
         </Grid.Container>
       </article>
