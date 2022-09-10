@@ -100,6 +100,17 @@ export default function AdminPannel() {
             hideIn="xs"
             activeColor="primary"
           >
+            <Navbar.Item isActive={false}>
+              <Link href="/">
+                <div
+                  style={{
+                    color: "var(--nextui-colors-text)",
+                  }}
+                >
+                  Dioh
+                </div>
+              </Link>
+            </Navbar.Item>
             {pages.map((page, index) => {
               return (
                 <Navbar.Item
