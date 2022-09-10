@@ -73,7 +73,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       return;
     }
 
-    if (user.havingPoint < 75) {
+    if (user.havingPoint < 50) {
       res.send(
         JSON.stringify({
           err: "You do not have enough points to buy this background image.",
@@ -83,7 +83,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       return;
     }
 
-    user.havingPoint -= 75; // remove points
+    user.havingPoint -= 50; // remove points
     (user.HavingBackgroundImgIndexes as number[]).push(
       parseInt(buyPictureIdx as string)
     ); // add img
