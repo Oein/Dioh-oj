@@ -94,13 +94,7 @@ export default function Mypage() {
           setIsMe(true);
         }
       });
-  }, [
-    session.data?.user?.id,
-    session.status,
-    userNickname,
-    userNumber,
-    temp__________,
-  ]);
+  }, [session.data?.user?.id, session.status, userNickname, userNumber]);
 
   useEffect(() => {
     document.addEventListener("scroll", (e) => {
