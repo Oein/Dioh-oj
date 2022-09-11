@@ -1,17 +1,19 @@
-import "../styles/globals.css";
 import type { AppProps } from "next/app";
 import { NextUIProvider } from "@nextui-org/react";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { createTheme } from "@nextui-org/react";
 import { SessionProvider } from "next-auth/react";
 import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+
 import NoSSR from "react-no-ssr";
 
 import { useEffect } from "react";
 import Router from "next/router";
 import NProgress from "nprogress";
+
 import "nprogress/nprogress.css";
+import "react-toastify/dist/ReactToastify.css";
+import "../styles/globals.css";
 
 const darkTheme = createTheme({
   type: "light",
