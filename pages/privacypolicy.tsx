@@ -252,7 +252,7 @@ export default function PP() {
         <p>
           Privacy Contact
           <br />
-          https://dioh.kr/privacycontact{" "}
+          https://dioh.kr/privacypolicy{" "}
         </p>
       </article>
       <Footer />
