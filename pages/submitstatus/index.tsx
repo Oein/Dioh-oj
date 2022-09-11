@@ -271,13 +271,23 @@ export default function SubmitStatus() {
                         100
                       </div>
                     ) : v.score == 0 ? (
-                      <div
-                        style={{
-                          color: "var(--nextui-colors-error)",
-                        }}
-                      >
-                        0
-                      </div>
+                      (v.error || "").length > 0 ? (
+                        <div
+                          style={{
+                            color: "var(--nextui-colors-error)",
+                          }}
+                        >
+                          ERR
+                        </div>
+                      ) : (
+                        <div
+                          style={{
+                            color: "var(--nextui-colors-error)",
+                          }}
+                        >
+                          0
+                        </div>
+                      )
                     ) : (
                       <div
                         style={{
