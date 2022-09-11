@@ -16,9 +16,7 @@ const ApiClient = () => {
     (response) => {
       return response;
     },
-    (error) => {
-      console.log(`error`, error);
-    }
+    (error) => {}
   );
 
   return instance;

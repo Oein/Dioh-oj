@@ -97,7 +97,6 @@ let update: SubPage = {
                       });
                       return;
                     }
-                    console.log(v.data);
                     prop.setBody(v.data.body);
                     prop.setPoint(v.data.point);
                     prop.setName(v.data.name);

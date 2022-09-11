@@ -65,9 +65,7 @@ export default function Mypage() {
         if (v.data.err) {
           return;
         }
-        console.log(v.data);
         const havingBGS = v.data.HavingBackgroundImgIndexes as number[];
-        console.log(havingBGS);
         let temp__: {
           value: string;
           label: string;
@@ -150,7 +148,6 @@ export default function Mypage() {
             defaultValue={selectedOption}
             value={selectedOption}
             onChange={(e: any) => {
-              console.log(e);
               load(true);
               setSelectedOption(e);
               customAxios

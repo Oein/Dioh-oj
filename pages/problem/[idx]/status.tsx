@@ -125,7 +125,7 @@ export default function SubmitStatus() {
         });
       }
     });
-    channel.subscribe().receive("ok", () => console.log("Connected!"));
+    channel.subscribe().receive("ok", () => {});
 
     // Set the JWT so Realtime can verify and keep the channel alive
     socket.setAuth(process.env.NEXT_PUBLIC_SUPABASE_ANON as string);
@@ -147,7 +147,6 @@ export default function SubmitStatus() {
         if (v.data.length == 0) {
           return;
         }
-        console.log(v.data);
         setCursor(v.data[v.data.length - 1].id);
         setSubmits2(submits2.concat(v.data));
       })
@@ -312,7 +311,6 @@ export default function SubmitStatus() {
                   });
                   return;
                 }
-                console.log(v.data);
                 setCursor(v.data[v.data.length - 1].id);
                 setSubmits2(submits2.concat(v.data));
               })

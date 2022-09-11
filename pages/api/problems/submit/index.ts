@@ -154,11 +154,6 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
                             suc: `Successfully requested your judge.`,
                           })
                         );
-                        console.log(
-                          `Requested ${uidX} ${uToken} ${(
-                            process.env.JUDGE_SPREADER_URL as string
-                          ).replace("_id_", uidX)}`
-                        );
                         resolve();
                         return;
                       })
