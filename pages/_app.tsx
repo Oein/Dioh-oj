@@ -14,6 +14,7 @@ import NProgress from "nprogress";
 import "nprogress/nprogress.css";
 import "react-toastify/dist/ReactToastify.css";
 import "../styles/globals.css";
+import Head from "next/head";
 
 const darkTheme = createTheme({
   type: "light",
@@ -79,6 +80,12 @@ function MyApp({ Component, pageProps }: AppProps) {
                 pauseOnHover
               />
               <Component {...pageProps} />
+              <Head>
+                <meta
+                  name="viewport"
+                  content="viewport-fit=cover,width=device-width,"
+                />
+              </Head>
             </div>
           </NextUIProvider>
         </NextThemesProvider>

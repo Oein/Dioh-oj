@@ -12,11 +12,6 @@ export default function Document() {
           strategy="beforeInteractive"
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7648972371680937"
         />
-
-        <meta
-          name="viewport"
-          content="viewport-fit=cover,width=device-width,"
-        />
         <meta name="author" content="Oein , Dina"></meta>
         <meta
           name="description"
@@ -28,6 +23,19 @@ export default function Document() {
           name="google-site-verification"
           content="axAJTWFc4-IbKQBDijFtNzJmNMfBbbrQLMcy4VdKA4g"
         />
+
+        <meta
+          name="og:image"
+          content="https://cdn.discordapp.com/attachments/1018073277635252264/1018353701330636851/DALLE_2022-09-10_11.43.06_-_penguin_pixel_art.png"
+        />
+        <link
+          rel="icon"
+          href="https://cdn.discordapp.com/attachments/1018073277635252264/1018353701330636851/DALLE_2022-09-10_11.43.06_-_penguin_pixel_art.png"
+        ></link>
+        <link
+          rel="shortcut icon"
+          href="https://cdn.discordapp.com/attachments/1018073277635252264/1018353701330636851/DALLE_2022-09-10_11.43.06_-_penguin_pixel_art.png"
+        ></link>
       </Head>
       <body>
         <Main />
