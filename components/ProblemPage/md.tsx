@@ -56,12 +56,18 @@ export default function MD(props: { text: string }) {
                   {...props}
                   style={docco}
                 >
-                  {String(children).replace(/\n$/, "")}
+                  {("\n" + String(children) + "_EMEMEM_")
+                    .replace(/\n$/, "")
+                    .replaceAll(" ", "␣")
+                    .replace("_EMEMEM_", " ")}
                 </SyntaxHighlighter>
               </div>
             ) : (
               <code className={`${className}`} {...props}>
-                {children}
+                {("\n" + String(children) + "_EMEMEM_")
+                  .replace(/\n$/, "")
+                  .replaceAll(" ", "␣")
+                  .replace("_EMEMEM_", " ")}
               </code>
             );
           },
