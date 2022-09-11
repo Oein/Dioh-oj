@@ -74,6 +74,19 @@ export default function Footer() {
               <Grid>
                 <Link href="https://discord.gg/VqetQJf7">Discord</Link>
               </Grid>
+              <Grid>
+                <div
+                  style={{
+                    marginLeft: "10px",
+                    marginRight: "10px",
+                  }}
+                >
+                  |
+                </div>
+              </Grid>
+              <Grid>
+                <Link href="/privacypolicy">Privacy Policy</Link>
+              </Grid>
             </Grid.Container>
           </Grid>
           <Grid>
