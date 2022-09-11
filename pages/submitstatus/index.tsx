@@ -243,7 +243,51 @@ export default function SubmitStatus() {
                       </div>
                     </Link>
                   </Table.Cell>
-                  <Table.Cell>{v.score}</Table.Cell>
+                  <Table.Cell>
+                    {v.error == "Timeout" ? (
+                      v.score == 0 ? (
+                        <div
+                          style={{
+                            color: "var(--nextui-colors-error)",
+                          }}
+                        >
+                          TLE
+                        </div>
+                      ) : (
+                        <div
+                          style={{
+                            color: "var(--nextui-colors-warning)",
+                          }}
+                        >
+                          TLE / {v.score}
+                        </div>
+                      )
+                    ) : v.score == 100 ? (
+                      <div
+                        style={{
+                          color: "var(--nextui-colors-success)",
+                        }}
+                      >
+                        100
+                      </div>
+                    ) : v.score == 0 ? (
+                      <div
+                        style={{
+                          color: "var(--nextui-colors-error)",
+                        }}
+                      >
+                        0
+                      </div>
+                    ) : (
+                      <div
+                        style={{
+                          color: "var(--nextui-colors-warning)",
+                        }}
+                      >
+                        {v.score}
+                      </div>
+                    )}
+                  </Table.Cell>
                   <Table.Cell>
                     {(langName[v.type as string] as string) ||
                       (v.type as string)}
