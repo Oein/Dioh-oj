@@ -68,14 +68,7 @@ export default function MD(props: { text: string }) {
               </div>
             ) : (
               <code className={`${className}`} {...props}>
-                {("_EMEMEM_" + String(children) + "_EMEMEM_")
-                  .replace("_EMEMEM_", "_X_X_X_X_")
-                  .replace(/\n$/, "")
-                  .replaceAll(" ", "␣")
-                  .replaceAll("\n_EMEMEM_", "_EMEMEM_")
-                  .replaceAll("\n", "↵\n")
-                  .replaceAll("_X_X_X_X_", "\n")
-                  .replaceAll("_EMEMEM_", "\n ")}
+                {String(children)}
               </code>
             );
           },
