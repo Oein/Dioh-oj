@@ -225,10 +225,12 @@ export default function ProblemPage() {
                   }
 
                   if (v.data.suc) {
-                    toast(v.data.suc, {
-                      type: "success",
-                    });
-                    router.push(`/problem/${query.idx}`);
+                    setTimeout(() => {
+                      toast(v.data.suc, {
+                        type: "success",
+                      });
+                      router.push(`/problem/${query.idx}/status`);
+                    }, 1000);
                   }
                 })
                 .catch((err) => {
