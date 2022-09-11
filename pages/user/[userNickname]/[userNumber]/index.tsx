@@ -13,6 +13,7 @@ import Select from "react-select";
 import Load from "../../../../components/Loading";
 import customAxios from "../../../../util/customAxios";
 import { toast } from "react-toastify";
+import Footer from "../../../../components/footer";
 
 export default function Mypage() {
   let [user, setUser] = useState<User>({
@@ -311,6 +312,8 @@ export default function Mypage() {
           </div>
         </div>
       </article>
+
+      <Footer />
 
       <style>{`
         .BGSELEC {
