@@ -5,13 +5,11 @@ export default function Document() {
   return (
     <Html>
       <Head>
-        <Script
+        <script
           async
-          crossOrigin="anonymous"
-          id="adsense"
-          strategy="beforeInteractive"
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7648972371680937"
-        />
+          crossOrigin="anonymous"
+        ></script>
         <meta name="author" content="Oein , Dina"></meta>
         <meta
           name="description"
