@@ -285,12 +285,23 @@ export default function SubmitStatus() {
                       >
                         ERR
                       </div>
+                    ) : json_state["a"].usedTime == null ? (
+                      <div
+                        style={{
+                          color: "var(--nextui-colors-neutral)",
+                          fontSize: "var(--nextui-fontSizes-3xl)",
+                        }}
+                        className="centerH"
+                      >
+                        Judging...
+                      </div>
                     ) : (
                       <div
                         style={{
                           color: "var(--nextui-colors-error)",
                           fontSize: "var(--nextui-fontSizes-3xl)",
                         }}
+                        className="centerH"
                       >
                         0
                       </div>
@@ -315,7 +326,7 @@ export default function SubmitStatus() {
                 </Grid>
                 <Grid>
                   <div className="centerH">
-                    {json_state["a"].usedTime}ms eslaped
+                    {json_state["a"].usedTime || "NONE"} ms eslaped
                   </div>
                 </Grid>
                 <Grid>
@@ -331,7 +342,7 @@ export default function SubmitStatus() {
                 </Grid>
                 <Grid>
                   <div className="centerH">
-                    {json_state["a"].usedMemory}bytes needed
+                    {json_state["a"].usedMemory || "NONE"} bytes needed
                   </div>
                 </Grid>
               </Grid.Container>
@@ -352,7 +363,8 @@ export default function SubmitStatus() {
                   readOnly: true,
                 }}
               />
-              {json_state["a"].error.length > 0 &&
+              {json_state["a"].error &&
+              json_state["a"].error.length > 0 &&
               json_state["a"].error != "Timeout" ? (
                 <>
                   <div
@@ -514,7 +526,7 @@ export default function SubmitStatus() {
                             color: "var(--nextui-colors-neutral)",
                           }}
                         >
-                          Judging..
+                          Judging...
                         </div>
                       ) : (
                         <div
