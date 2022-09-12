@@ -508,6 +508,14 @@ export default function SubmitStatus() {
                         >
                           ERR
                         </div>
+                      ) : v.usedTime == null ? (
+                        <div
+                          style={{
+                            color: "var(--nextui-colors-neutral)",
+                          }}
+                        >
+                          Judging..
+                        </div>
                       ) : (
                         <div
                           style={{
