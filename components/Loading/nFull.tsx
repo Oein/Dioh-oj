@@ -9,6 +9,7 @@ export default function NFullLoad() {
         top: "50%",
         transform: "translate(-50%, -50%)",
         background: "rgba(0 , 0 , 0 , 0.5)",
+        zIndex: "9999",
       }}
       className={style.loadP}
     >
