@@ -1,10 +1,6 @@
 import style from "./index.module.css";
 
-export default function Load({
-  disableInteraction = true,
-}: {
-  disableInteraction: boolean | null;
-}) {
+export default function Load() {
   return (
     <div
       style={{
@@ -17,7 +13,7 @@ export default function Load({
         right: "0px",
         background: "black",
         opacity: "0.5",
-        zIndex: disableInteraction ? "99999" : "-1",
+        zIndex: "99999",
       }}
     >
       <div
