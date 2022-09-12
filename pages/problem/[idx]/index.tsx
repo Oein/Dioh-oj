@@ -92,7 +92,7 @@ export default function ProblemPage() {
           </Grid>
           <Grid>
             <Link
-              href={`/problem/${query.idx}/status`}
+              href={`/submitstatus?problem=${query.idx}&user=`}
               style={{
                 color: "var(--nextui-colors-text)",
               }}
