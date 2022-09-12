@@ -1,5 +1,13 @@
-import { useEffect, useState } from "react";
-import { Button, Link, Table, Input, Grid } from "@nextui-org/react";
+import { Suspense, useEffect, useState } from "react";
+import {
+  Button,
+  Link,
+  Table,
+  Input,
+  Grid,
+  Modal,
+  Text,
+} from "@nextui-org/react";
 import MyHead from "../../components/head";
 import { RealtimeClient } from "@supabase/realtime-js";
 import { SourceCode } from "@prisma/client";
@@ -10,6 +18,11 @@ import { useRouter } from "next/router";
 import Load from "../../components/Loading";
 import axios from "axios";
 import { toast } from "react-toastify";
+import customAxios from "../../util/customAxios";
+import NFullLoad from "../../components/Loading/nFull";
+
+import Editor from "@monaco-editor/react";
+import dynamic from "next/dynamic";
 
 const langName: { [key: string]: string } = {
   cpp: "C++",
@@ -17,14 +30,34 @@ const langName: { [key: string]: string } = {
   py: "Python",
 };
 
+const MD = dynamic(() => import("../../components/ProblemPage/md"), {
+  suspense: true,
+});
+
 export default function SubmitStatus() {
+  // Realtime submits
   let [submits, setSubmits] = useState<SourceCode[]>([]);
+
+  // Old submits
   let [submits2, setSubmits2] = useState<SourceCode[]>([]);
+
+  // force update
   let [temp__________, temp__________s] = useState("");
+
+  // 로딩
   let [loading, load] = useState(false);
+
+  // 다음 로드 커서
   let [cursor, setCursor] = useState("");
+
+  // 조건
   let [input_1, setI1] = useState("");
   let [input_2, setI2] = useState("");
+
+  // Source code
+  let [json_state, setJSONSTATE] = useState<{ [key: string]: any }>({});
+  let [modalSID, setMODALSID] = useState("");
+
   let router = useRouter();
   let query = router.query;
 
@@ -154,6 +187,34 @@ export default function SubmitStatus() {
     };
   }, [query.problem, query.user, submits]);
 
+  useEffect(() => {
+    if (modalSID.length > 0) {
+      customAxios
+        .get(`/api/source/get/${modalSID}`)
+        .then((v) => {
+          if (v.data.err) {
+            toast(`ERR / ${v.data.err}`, {
+              type: "error",
+            });
+            setMODALSID("");
+            setJSONSTATE({});
+            return;
+          }
+          setJSONSTATE(v.data);
+          console.log(v.data);
+        })
+        .catch((err) => {
+          toast(`ERR / ${err}`, {
+            type: "error",
+          });
+          setMODALSID("");
+          setJSONSTATE({});
+        });
+    } else {
+      setJSONSTATE({});
+    }
+  }, [modalSID]);
+
   return (
     <>
       {loading ? <Load /> : null}
@@ -165,6 +226,162 @@ export default function SubmitStatus() {
         {temp__________}
       </div>
       <MyHead />
+      <Modal
+        open={modalSID.length > 0}
+        onClose={() => {
+          setMODALSID("");
+          setJSONSTATE({});
+        }}
+        width="95vw"
+        scroll
+        closeButton
+      >
+        <Modal.Header>
+          <Text size={"$2xl"}>Result of Submit [{modalSID}]</Text>
+        </Modal.Header>
+        <Modal.Body>
+          {Object.keys(json_state).length == 0 ? (
+            <NFullLoad />
+          ) : (
+            <div>
+              <Grid.Container>
+                <Grid>
+                  {json_state["a"].error == "Timeout" ? (
+                    json_state["a"].score == 0 ? (
+                      <div
+                        style={{
+                          color: "var(--nextui-colors-error)",
+                          fontSize: "var(--nextui-fontSizes-3xl)",
+                        }}
+                      >
+                        TLE
+                      </div>
+                    ) : (
+                      <div
+                        style={{
+                          color: "var(--nextui-colors-warning)",
+                          fontSize: "var(--nextui-fontSizes-3xl)",
+                        }}
+                      >
+                        TLE / {json_state["a"].score}
+                      </div>
+                    )
+                  ) : json_state["a"].score == 100 ? (
+                    <div
+                      style={{
+                        color: "var(--nextui-colors-success)",
+                        fontSize: "var(--nextui-fontSizes-3xl)",
+                      }}
+                    >
+                      Success
+                    </div>
+                  ) : json_state["a"].score == 0 ? (
+                    (json_state["a"].error || "").length > 0 ? (
+                      <div
+                        style={{
+                          color: "var(--nextui-colors-error)",
+                          fontSize: "var(--nextui-fontSizes-3xl)",
+                        }}
+                      >
+                        ERR
+                      </div>
+                    ) : (
+                      <div
+                        style={{
+                          color: "var(--nextui-colors-error)",
+                          fontSize: "var(--nextui-fontSizes-3xl)",
+                        }}
+                      >
+                        0
+                      </div>
+                    )
+                  ) : (
+                    <div
+                      style={{
+                        color: "var(--nextui-colors-warning)",
+                        fontSize: "var(--nextui-fontSizes-3xl)",
+                      }}
+                    >
+                      {json_state["a"].score}
+                    </div>
+                  )}
+                </Grid>
+                <Grid>
+                  <div
+                    style={{
+                      width: "5px",
+                    }}
+                  ></div>
+                </Grid>
+                <Grid>
+                  <div className="centerH">
+                    {json_state["a"].usedTime}ms eslaped
+                  </div>
+                </Grid>
+                <Grid>
+                  <div
+                    style={{
+                      marginLeft: "5px",
+                      marginRight: "5px",
+                    }}
+                    className="centerH"
+                  >
+                    |
+                  </div>
+                </Grid>
+                <Grid>
+                  <div className="centerH">
+                    {json_state["a"].usedMemory}bytes needed
+                  </div>
+                </Grid>
+              </Grid.Container>
+              <div
+                className="borderBottom"
+                style={{
+                  marginBottom: "5px",
+                }}
+              >
+                <h3 className="borderBottomColored">제출 코드</h3>
+              </div>
+              <Editor
+                height="50vh"
+                language={json_state["a"].type.toLocaleLowerCase()}
+                defaultValue={json_state["b"].code}
+                theme="vs-dark"
+                options={{
+                  readOnly: true,
+                }}
+              />
+              {json_state["a"].error.length > 0 &&
+              json_state["a"].error != "Timeout" ? (
+                <>
+                  <div
+                    className="borderBottom"
+                    style={{
+                      marginBottom: "5px",
+                    }}
+                  >
+                    <h3 className="borderBottomColored">에러</h3>
+                  </div>
+                  <div
+                    style={{
+                      borderRadius: "15px",
+                    }}
+                  >
+                    <Suspense fallback={`Loading...`}>
+                      <Suspense fallback={<NFullLoad />}>
+                        <MD
+                          text={"```js\n" + json_state["a"].error + "\n```"}
+                        />
+                      </Suspense>
+                    </Suspense>
+                  </div>
+                </>
+              ) : null}
+            </div>
+          )}
+        </Modal.Body>
+      </Modal>
       <article className="container">
         <Grid.Container
           style={{
@@ -224,7 +441,18 @@ export default function SubmitStatus() {
             {submits.concat(submits2).map((v, idx) => {
               return (
                 <Table.Row key={idx}>
-                  <Table.Cell>{v.id}</Table.Cell>
+                  <Table.Cell>
+                    <div
+                      onClick={() => {
+                        setMODALSID(v.id);
+                      }}
+                      style={{
+                        cursor: "pointer",
+                      }}
+                    >
+                      {v.id}
+                    </div>
+                  </Table.Cell>
                   <Table.Cell>
                     <Link href={`/problem/${v.problem}`}>{v.problem}</Link>
                   </Table.Cell>
@@ -355,6 +583,12 @@ export default function SubmitStatus() {
           더 불러오기
         </Button>
       </article>
+
+      <style>{`
+        .monaco-editor {
+          border-radius: 16px;
+        }
+      `}</style>
     </>
   );
 }
