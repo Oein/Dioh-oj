@@ -3,7 +3,7 @@ import style from "./index.module.css";
 export default function Load({
   disableInteraction = true,
 }: {
-  disableInteraction: boolean;
+  disableInteraction: boolean | null;
 }) {
   return (
     <div
