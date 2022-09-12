@@ -229,7 +229,7 @@ export default function ProblemPage() {
                       toast(v.data.suc, {
                         type: "success",
                       });
-                      router.push(`/problem/${query.idx}/status`);
+                      router.push(`/submitstatus?problem=${query.idx}&user=`);
                     }, 1000);
                   }
                 })
