@@ -448,6 +448,7 @@ export default function SubmitStatus() {
                       }}
                       style={{
                         cursor: "pointer",
+                        color: "var(--nextui-colors-secondary)",
                       }}
                     >
                       {v.id}
