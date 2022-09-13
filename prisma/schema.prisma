@@ -17,6 +17,8 @@ model SourceCode {
   usedTime String?
   usedMemory String?
   error String?
+  errorType String?
+  scoreType Json @default("[]")
   user String
   score Int?
 }

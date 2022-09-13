@@ -17,6 +17,8 @@ model SourceCode {
   usedTime String?
   usedMemory String?
   error String?
+  errorType String?
+  scoreType Json @default("[]")
   user String
   score Int?
 }
@@ -83,6 +85,7 @@ model User {
   BanStarted Int @default(-1)
   Warns Json @default("[]")
   UserBackgroundImgIndex Int @default(0)
+  HavingBackgroundImgIndexes Json @default("[0]")
 }
 
 model VerificationToken {
