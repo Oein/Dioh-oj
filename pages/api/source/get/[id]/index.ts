@@ -63,7 +63,10 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       resolve();
       return;
     }
-    if (pprb.user != user.id) {
+    if (
+      pprb.user != user.id &&
+      !(user.permission as string[]).includes("admin")
+    ) {
       res.send(
         JSON.stringify({
           err: "Only submiter can see this.",
