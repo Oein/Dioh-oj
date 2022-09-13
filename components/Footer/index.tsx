@@ -40,7 +40,7 @@ export default function Footer() {
                     color: "var(--nextui-colors-accents7)",
                   }}
                 >
-                  (v.{process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA})
+                  (v.1.18.2)
                 </Text>
               </Grid>
             </Grid.Container>
