@@ -145,7 +145,7 @@ code {
   }
 }
 
-@media (min-width: 1399px) {
+@media (min-width: 1300px) {
   .toc {
     display: block;
   }
