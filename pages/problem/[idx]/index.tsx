@@ -21,40 +21,42 @@ const NFullLoad = dynamic(() => import("../../../components/Loading/nFull"), {
 
 const Headings = ({ headings }: { headings: any }) => (
   <ul>
-    {headings.map((heading: any) => (
-      <li key={heading.id}>
-        <a
-          href={`#${heading.id}`}
-          onClick={(e) => {
-            e.preventDefault();
-            document.querySelector(`#${heading.id}`)?.scrollIntoView({
-              behavior: "smooth",
-            });
-          }}
-        >
-          {heading.title}
-        </a>
-        {heading.items.length > 0 && (
-          <ul>
-            {heading.items.map((child: any) => (
-              <li key={child.id}>
-                <a
-                  href={`#${child.id}`}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    document.querySelector(`#${child.id}`)?.scrollIntoView({
-                      behavior: "smooth",
-                    });
-                  }}
-                >
-                  {child.title}
-                </a>
-              </li>
-            ))}
-          </ul>
-        )}
-      </li>
-    ))}
+    {headings.map((heading: any, index: number) =>
+      heading.id.length > 0 ? (
+        <li key={heading.id}>
+          <a
+            href={`#${heading.id}`}
+            onClick={(e) => {
+              e.preventDefault();
+              document.querySelector(`#${heading.id}`)?.scrollIntoView({
+                behavior: "smooth",
+              });
+            }}
+          >
+            {index + 1}. {heading.title}
+          </a>
+          {heading.items.length > 0 && (
+            <ul>
+              {heading.items.map((child: any, idix: number) => (
+                <li key={child.id}>
+                  <a
+                    href={`#${child.id}`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      document.querySelector(`#${child.id}`)?.scrollIntoView({
+                        behavior: "smooth",
+                      });
+                    }}
+                  >
+                    └ {child.title}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          )}
+        </li>
+      ) : null
+    )}
   </ul>
 );
 
