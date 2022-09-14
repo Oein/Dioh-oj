@@ -70,8 +70,8 @@ const getNestedHeadings = (headingElements: any) => {
       nestedHeadings.push({ id, title, items: [] });
     } else if (heading.nodeName === "H4" && nestedHeadings.length > 0) {
       nestedHeadings[nestedHeadings.length - 1].items.push({
-        id,
-        title,
+        id: id,
+        title: id.replaceAll("-", " "),
       });
     }
   });
