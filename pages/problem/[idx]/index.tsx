@@ -17,9 +17,64 @@ import { Suspense } from "react";
 const NFullLoad = dynamic(() => import("../../../components/Loading/nFull"), {
   suspense: true,
 });
-const MD = dynamic(() => import("../../../components/ProblemPage/md"), {
-  suspense: true,
-});
+
+const Headings = ({ headings }: { headings: any }) => (
+  <ul>
+    {headings.map((heading: any) => (
+      <li key={heading.id}>
+        <a
+          href={`#${heading.id}`}
+          onClick={(e) => {
+            e.preventDefault();
+            document.querySelector(`#${heading.id}`)?.scrollIntoView({
+              behavior: "smooth",
+            });
+          }}
+        >
+          {heading.title}
+        </a>
+        {heading.items.length > 0 && (
+          <ul>
+            {heading.items.map((child: any) => (
+              <li key={child.id}>
+                <a
+                  href={`#${child.id}`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    document.querySelector(`#${child.id}`)?.scrollIntoView({
+                      behavior: "smooth",
+                    });
+                  }}
+                >
+                  {child.title}
+                </a>
+              </li>
+            ))}
+          </ul>
+        )}
+      </li>
+    ))}
+  </ul>
+);
+
+const getNestedHeadings = (headingElements: any) => {
+  const nestedHeadings: any[] = [];
+
+  headingElements.forEach((heading: any, index: any) => {
+    const { innerText: title, id } = heading;
+
+    if (heading.nodeName === "H3") {
+      nestedHeadings.push({ id, title, items: [] });
+    } else if (heading.nodeName === "H4" && nestedHeadings.length > 0) {
+      nestedHeadings[nestedHeadings.length - 1].items.push({
+        id,
+        title,
+      });
+    }
+  });
+
+  return nestedHeadings;
+};
 
 export default function ProblemPage() {
   let router = useRouter();
@@ -30,6 +85,28 @@ export default function ProblemPage() {
   let [problemPoint, setProblemPoint] = useState("Loading...");
   let [problemReqs, setProblemReqs] = useState("Loading...");
   let [problemSucs, setProblemSucs] = useState("Loading...");
+
+  const [nestedHeadings, setNestedHeadings] = useState<any[]>([]);
+
+  const MD = dynamic(
+    () =>
+      import("../../../components/ProblemPage/md").finally(() => {
+        setTimeout(() => {
+          if (nestedHeadings.length > 0) {
+            return;
+          }
+          const headingElements = Array.from(
+            document.querySelectorAll("h3, h4")
+          );
+
+          const newNestedHeadings = getNestedHeadings(headingElements);
+          setNestedHeadings(newNestedHeadings);
+        }, 100);
+      }),
+    {
+      suspense: true,
+    }
+  );
 
   let { query } = router;
 
@@ -59,6 +136,11 @@ export default function ProblemPage() {
     <>
       <article className="container">
         <MyHead />
+
+        {/* Toc */}
+        <div className="toc">
+          <Headings headings={nestedHeadings} />
+        </div>
 
         {/* Option Menu */}
         <Grid.Container>
