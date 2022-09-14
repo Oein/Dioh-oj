@@ -89,13 +89,16 @@ code {
 }
 
 .borderBottom {
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  /* border-bottom: 1px solid rgba(0, 0, 0, 0.1); */
+  margin-top: 20px;
 }
 
 .borderBottomColored {
   border-bottom: 2px solid var(--nextui-colors-primary);
   display: inline-block;
   margin: 0 0 -2px 0;
+  padding-left: 5px;
+  padding-right: 5px;
 }
 
 .padding5px {
