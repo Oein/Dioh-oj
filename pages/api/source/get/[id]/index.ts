@@ -65,7 +65,8 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     }
     if (
       pprb.user != user.id &&
-      !(user.permission as string[]).includes("admin")
+      !(user.permission as string[]).includes("admin") &&
+      !(user.solvedProblems as string[]).includes(pprb.problem)
     ) {
       res.send(
         JSON.stringify({
