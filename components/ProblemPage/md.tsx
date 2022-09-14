@@ -88,7 +88,7 @@ export default function MD(props: { text: string }) {
           },
           h2: markdownH3,
           h1: markdownH3,
-          h3: markdownH3,
+          h3: markdownH4,
           h4: markdownH4,
           p: ({ children }) => {
             return <p className="">{children}</p>;
