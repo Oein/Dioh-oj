@@ -94,7 +94,7 @@ code {
 }
 
 .borderBottomColored {
-  border-bottom: 2px solid var(--nextui-colors-primary);
+  border-bottom: 2px solid var(--nextui-colors-secondary);
   display: inline-block;
   margin: 0 0 -2px 0;
   padding-left: 5px;
