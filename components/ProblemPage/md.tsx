@@ -29,7 +29,12 @@ export default function MD(props: { text: string }) {
 
   const markdownH4: HeadingComponent = ({ children, ...props }) => {
     return (
-      <h4 id={`${(children?.toString() || "").replaceAll(" ", "-")}`}>
+      <h4
+        id={`${(children?.toString() || "").replaceAll(" ", "-")}`}
+        style={{
+          marginLeft: "10px",
+        }}
+      >
         {children}
       </h4>
     );
