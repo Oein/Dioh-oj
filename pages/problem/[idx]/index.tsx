@@ -4,6 +4,7 @@ import MyHead from "../../../components/head";
 import MyFooter from "../../../components/footer";
 import axios from "axios";
 import { Grid, Image, Link, Table } from "@nextui-org/react";
+import MD from "../../../components/ProblemPage/md";
 
 import {
   MdMemory as Memory,
@@ -88,26 +89,6 @@ export default function ProblemPage() {
 
   const [nestedHeadings, setNestedHeadings] = useState<any[]>([]);
 
-  const MD = dynamic(
-    () =>
-      import("../../../components/ProblemPage/md").finally(() => {
-        setTimeout(() => {
-          if (nestedHeadings.length > 0) {
-            return;
-          }
-          const headingElements = Array.from(
-            document.querySelectorAll("h3, h4")
-          );
-
-          const newNestedHeadings = getNestedHeadings(headingElements);
-          setNestedHeadings(newNestedHeadings);
-        }, 100);
-      }),
-    {
-      suspense: true,
-    }
-  );
-
   let { query } = router;
 
   // 1번만 실행
@@ -129,6 +110,13 @@ export default function ProblemPage() {
       setProblemReqs(problem.solveRequestedCount + "번");
       setProblemSucs(problem.solvedPeopleCount + "명");
       setProblemArticles(problem.body);
+
+      setTimeout(() => {
+        const headingElements = Array.from(document.querySelectorAll("h3, h4"));
+
+        const newNestedHeadings = getNestedHeadings(headingElements);
+        setNestedHeadings(newNestedHeadings);
+      }, 100);
     });
   }, [router.isReady, router.query]);
 

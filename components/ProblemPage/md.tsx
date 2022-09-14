@@ -19,7 +19,7 @@ export default function MD(props: { text: string }) {
       <div className="borderBottom">
         <h3
           className={`borderBottomColored`}
-          id={`${children.toString().replaceAll(" ", "-")}`}
+          id={`${(children?.toString() || "").replaceAll(" ", "-")}`}
         >
           {children}
         </h3>
@@ -29,7 +29,9 @@ export default function MD(props: { text: string }) {
 
   const markdownH4: HeadingComponent = ({ children, ...props }) => {
     return (
-      <h4 id={`${children.toString().replaceAll(" ", "-")}`}>{children}</h4>
+      <h4 id={`${(children?.toString() || "").replaceAll(" ", "-")}`}>
+        {children}
+      </h4>
     );
   };
 
