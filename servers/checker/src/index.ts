@@ -4,6 +4,7 @@ import { mkdirSync, rmSync, writeFileSync } from "fs";
 import { join as pjoin } from "path";
 import { PrismaClient, SourceCode, Problem } from "@prisma/client";
 import { execSync, spawn } from "child_process";
+import pidusage from "pidusage";
 
 const prisma = new PrismaClient();
 const maxChildsCount = 5;
@@ -185,6 +186,10 @@ async function judge(v: SourceCode, sourcode: string) {
       child.on("exit", function () {
         clearInterval(timeoutHandler);
         child.kill();
+      });
+
+      pidusage(child.pid || "", (e, s) => {
+        console.log(e, s);
       });
 
       child.on("close", (code) => {
