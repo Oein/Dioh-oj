@@ -10,6 +10,7 @@ const prisma = new PrismaClient();
 const maxChildsCount = 5;
 
 const codeDir = process.env.CODE_DIR as string;
+const memoryCheckMS = 10;
 
 let app = express();
 let port = process.env.PORT || 5690;
@@ -102,6 +103,7 @@ async function judge(v: SourceCode, sourcode: string) {
   let problem: Problem;
   let language = langs[v.type];
   let distFile: string;
+  let maxMemoryUsage: number = 0;
 
   const build = (
     buildCommand: string,
@@ -180,20 +182,38 @@ async function judge(v: SourceCode, sourcode: string) {
       let timeoutHandler = setTimeout(async () => {
         timeouted = true;
         if (!child.killed) child.kill();
+        clearInterval(memoryUsageChecker);
         resolve("TLE");
       }, problem.maxTime + 100);
 
+      let memoryUsageChecker = setInterval(() => {
+        if (child.killed) {
+          clearInterval(memoryUsageChecker);
+          return;
+        }
+
+        if (child.pid) {
+          pidusage(child.pid, (e, s) => {
+            maxMemoryUsage = Math.max(maxMemoryUsage, s.memory);
+          });
+        }
+      }, memoryCheckMS);
+
       child.on("exit", function () {
-        clearInterval(timeoutHandler);
+        clearTimeout(timeoutHandler);
+        clearInterval(memoryUsageChecker);
         child.kill();
       });
 
-      pidusage(child.pid || "", (e, s) => {
-        console.log(e, s);
-      });
+      if (child.pid) {
+        pidusage(child.pid, (e, s) => {
+          maxMemoryUsage = Math.max(maxMemoryUsage, s.memory);
+        });
+      }
 
       child.on("close", (code) => {
-        clearInterval(timeoutHandler);
+        clearTimeout(timeoutHandler);
+        clearInterval(memoryUsageChecker);
 
         if (stderr.length > 0) {
           console.log("RE ", stderr);
@@ -319,6 +339,8 @@ async function judge(v: SourceCode, sourcode: string) {
     }
 
     console.log("Judge Result : ", result);
+
+    console.log("MAX MEMORY", maxMemoryUsage);
 
     rmSync(srcFile);
     if (language.buildCommand) rmSync(distFile);
