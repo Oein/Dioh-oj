@@ -26,5 +26,7 @@ RUN yarn install
 RUN npx prisma generate
 RUN mkdir /opt/app/servers/checker/code
 
+RUN addgroup execute
+
 EXPOSE 5690
 ENTRYPOINT ["/bin/bash"]
