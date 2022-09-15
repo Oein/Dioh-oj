@@ -9,7 +9,7 @@ RUN apt-get -qq upgrade --yes
 RUN apt-get -qq install curl --yes
 RUN curl -sL https://deb.nodesource.com/setup_16.x | bash -
 RUN apt-get -qq install nodejs --yes
-RUN apt-get -qq install -y g++ cmake wget unzip python3 build-essential git
+RUN apt-get -qq install -y g++ cmake wget unzip python3 build-essential git nano
 RUN apt-get clean
 
 RUN mkdir /opt/app
