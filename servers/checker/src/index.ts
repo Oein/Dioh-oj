@@ -104,6 +104,7 @@ async function judge(v: SourceCode, sourcode: string) {
   let language = langs[v.type];
   let distFile: string;
   let maxMemoryUsage: number = 0;
+  let maxTimeUsage: number = 0;
 
   const build = (
     buildCommand: string,
@@ -158,6 +159,8 @@ async function judge(v: SourceCode, sourcode: string) {
     username: string
   ) => {
     return new Promise<JudgeResult__>((resolve, reject) => {
+      let st = new Date().getTime();
+
       const child = spawn("su", ["-m", username, "-c", runCommand], {
         stdio: ["pipe", "pipe", "pipe"],
         detached: true,
@@ -214,6 +217,10 @@ async function judge(v: SourceCode, sourcode: string) {
       child.on("close", (code) => {
         clearTimeout(timeoutHandler);
         clearInterval(memoryUsageChecker);
+
+        let ed = new Date().getTime();
+
+        maxTimeUsage = Math.max(maxTimeUsage, ed - st);
 
         if (stderr.length > 0) {
           console.log("RE ", stderr);
@@ -333,18 +340,26 @@ async function judge(v: SourceCode, sourcode: string) {
       | { input: string; output: string }
     )[][];
 
+    let score = 0;
+
     for (let i = 0; i < tc.length; i++) {
       let tcsx = tc[i];
       result.push(await judgeSubtask(tcsx, v.id));
+      if (result[i] == "AC") score += tcsx[0] as number;
     }
-
-    console.log("Judge Result : ", result);
-
-    console.log("MAX MEMORY", maxMemoryUsage);
 
     rmSync(srcFile);
     if (language.buildCommand) rmSync(distFile);
     clearTempEnv(v.id);
+
+    resolve({
+      error: null,
+      errorType: null,
+      ram: maxMemoryUsage,
+      time: maxTimeUsage,
+      score: score,
+      scoreTypes: result,
+    });
   });
 }
 
