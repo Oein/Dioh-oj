@@ -1,9 +1,9 @@
 import express from "express";
 import "dotenv/config";
-import { rmSync, writeFileSync } from "fs";
+import { mkdirSync, rmSync, writeFileSync } from "fs";
 import { join as pjoin } from "path";
 import { PrismaClient, SourceCode, Problem } from "@prisma/client";
-import { spawn } from "child_process";
+import { execSync, spawn } from "child_process";
 
 const prisma = new PrismaClient();
 const maxChildsCount = 5;
@@ -53,6 +53,30 @@ let langs: { [key: string]: Language } = {
   },
 };
 
+export function getTmpPath(uid: string) {
+  return pjoin(codeDir, uid);
+}
+
+function initTempEnv(uid: string) {
+  const tmpPath = getTmpPath(uid);
+  execSync(
+    `adduser --ingroup execute --disabled-password --no-create-home ${uid}`,
+    {
+      stdio: "ignore",
+    }
+  );
+  mkdirSync(tmpPath, { recursive: true });
+  execSync(`chown ${uid} ${tmpPath}`, { stdio: "ignore" });
+
+  return tmpPath;
+}
+
+function clearTempEnv(uid: string) {
+  const tmpPath = getTmpPath(uid);
+  rmSync(tmpPath, { recursive: true });
+  execSync(`deluser ${uid}`, { stdio: "ignore" });
+}
+
 function getLimitString(memoryLimit: number | null, command: string) {
   return `${memoryLimit ? `ulimit -v ${memoryLimit * 1024};` : ""}${command}`;
 }
@@ -78,10 +102,17 @@ async function judge(v: SourceCode, sourcode: string) {
   let language = langs[v.type];
   let distFile: string;
 
-  const build = (buildCommand: string, output: string, src: string) => {
+  const build = (
+    buildCommand: string,
+    output: string,
+    src: string,
+    username: string
+  ) => {
     return new Promise<{ success: boolean; error: string }>(
       (resolve, reject) => {
-        const child = spawn("/bin/bash", [
+        const child = spawn("su", [
+          "-m",
+          username,
           "-c",
           buildCommand.replace("$output", output).replace("$file", src),
         ]);
@@ -117,9 +148,14 @@ async function judge(v: SourceCode, sourcode: string) {
     );
   };
 
-  const judge = (input: string, output: string, runCommand: string) => {
+  const judge = (
+    input: string,
+    output: string,
+    runCommand: string,
+    username: string
+  ) => {
     return new Promise<JudgeResult__>((resolve, reject) => {
-      const child = spawn("/bin/bash", ["-c", runCommand], {
+      const child = spawn("su", ["-m", username, "-c", runCommand], {
         stdio: ["pipe", "pipe", "pipe"],
         detached: true,
       });
@@ -166,7 +202,8 @@ async function judge(v: SourceCode, sourcode: string) {
   };
 
   const judgeSubtask = (
-    subtasks: (number | { input: string; output: string })[]
+    subtasks: (number | { input: string; output: string })[],
+    username: string
   ) => {
     return new Promise<JudgeResult__>(async (resolve, reject) => {
       for (let i = 0; i < subtasks.length; i++) {
@@ -178,7 +215,8 @@ async function judge(v: SourceCode, sourcode: string) {
           getLimitString(
             problem.maxMemoryMB * 1024,
             (language.runCommand || "").replace("$file", distFile)
-          )
+          ),
+          username
         );
 
         if (result == "RE") {
@@ -203,8 +241,10 @@ async function judge(v: SourceCode, sourcode: string) {
   };
 
   return new Promise<JudgeResult>(async (resolve, reject) => {
-    let srcFile = pjoin(codeDir, `${v.id}.${language.fileExt}`);
-    let buildOutputFile = pjoin(codeDir, `${v.id}`);
+    initTempEnv(v.id);
+
+    let srcFile = pjoin(codeDir, v.id, `${v.id}.${language.fileExt}`);
+    let buildOutputFile = pjoin(codeDir, v.id, `${v.id}`);
 
     writeFileSync(srcFile, sourcode, "utf-8");
 
@@ -212,13 +252,15 @@ async function judge(v: SourceCode, sourcode: string) {
       let buildSuccess = await build(
         language.buildCommand,
         buildOutputFile,
-        srcFile
+        srcFile,
+        v.id
       );
 
       if (buildSuccess.success == false) {
         console.log("Build failed");
 
         rmSync(srcFile);
+        clearTempEnv(v.id);
 
         resolve({
           error: buildSuccess.error,
@@ -243,6 +285,7 @@ async function judge(v: SourceCode, sourcode: string) {
     if (problem_ == null) {
       rmSync(srcFile);
       if (language.buildCommand) rmSync(distFile);
+      clearTempEnv(v.id);
 
       resolve({
         error: "Problem Not Found",
@@ -252,6 +295,7 @@ async function judge(v: SourceCode, sourcode: string) {
         scoreTypes: [],
         time: 2147483647,
       });
+
       return;
     }
 
@@ -266,13 +310,14 @@ async function judge(v: SourceCode, sourcode: string) {
 
     for (let i = 0; i < tc.length; i++) {
       let tcsx = tc[i];
-      result.push(await judgeSubtask(tcsx));
+      result.push(await judgeSubtask(tcsx, v.id));
     }
 
     console.log("Judge Result : ", result);
 
     rmSync(srcFile);
     if (language.buildCommand) rmSync(distFile);
+    clearTempEnv(v.id);
   });
 }
 
