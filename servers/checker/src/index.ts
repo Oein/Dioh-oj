@@ -4,7 +4,6 @@ import { rmSync, writeFileSync } from "fs";
 import { join as pjoin } from "path";
 import { PrismaClient, SourceCode, Problem } from "@prisma/client";
 import { spawn } from "child_process";
-import { type } from "os";
 
 const prisma = new PrismaClient();
 const maxChildsCount = 5;
