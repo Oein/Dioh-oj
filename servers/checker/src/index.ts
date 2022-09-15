@@ -197,7 +197,9 @@ async function judge(v: SourceCode, sourcode: string) {
 
         if (child.pid) {
           pidusage(child.pid, (e, s) => {
-            if (s.memory) maxMemoryUsage = Math.max(maxMemoryUsage, s.memory);
+            if (s && s.memory)
+              maxMemoryUsage = Math.max(maxMemoryUsage, s.memory);
+            if (s == null) clearInterval(memoryUsageChecker);
           });
         }
       }, memoryCheckMS);
@@ -210,7 +212,8 @@ async function judge(v: SourceCode, sourcode: string) {
 
       if (child.pid) {
         pidusage(child.pid, (e, s) => {
-          if (s.memory) maxMemoryUsage = Math.max(maxMemoryUsage, s.memory);
+          if (s && s.memory)
+            maxMemoryUsage = Math.max(maxMemoryUsage, s.memory);
         });
       }
 
