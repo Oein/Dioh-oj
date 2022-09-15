@@ -59,7 +59,7 @@ function getLimitString(
   command: string
 ) {
   return `${memoryLimit ? `ulimit -v ${memoryLimit * 1024 * 1024};` : ""}${
-    cpuLimit ? `cpulimit --include-children --limit ${cpuLimit} -- ` : ""
+    cpuLimit ? `cpulimit --limit ${cpuLimit} -- ` : ""
   }${command}`;
 }
 
