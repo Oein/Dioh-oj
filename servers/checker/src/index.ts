@@ -53,14 +53,8 @@ let langs: { [key: string]: Language } = {
   },
 };
 
-function getLimitString(
-  memoryLimit: number | null,
-  cpuLimit: number | null,
-  command: string
-) {
-  return `${memoryLimit ? `ulimit -v ${memoryLimit * 1024 * 1024};` : ""}${
-    cpuLimit ? `cpulimit --limit ${cpuLimit} -- ` : ""
-  }${command}`;
+function getLimitString(memoryLimit: number | null, command: string) {
+  return `${memoryLimit ? `ulimit -v ${memoryLimit * 1024};` : ""}${command}`;
 }
 
 type JudgeResult__ = "AC" | "TLE" | "WA" | "RE";
@@ -183,7 +177,6 @@ async function judge(v: SourceCode, sourcode: string) {
           subtask.output,
           getLimitString(
             problem.maxMemoryMB * 1024,
-            98,
             (language.runCommand || "").replace("$file", distFile)
           )
         );
