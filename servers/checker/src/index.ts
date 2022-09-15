@@ -1,14 +1,16 @@
 import express from "express";
 import "dotenv/config";
-import { rm, writeFile } from "fs";
+import { mkdirSync, rmSync, writeFileSync } from "fs";
 import { join as pjoin } from "path";
-import { PrismaClient, Problem, SourceCode } from "@prisma/client";
-import { execa } from "execa";
+import { PrismaClient, SourceCode, Problem } from "@prisma/client";
+import { execSync, spawn } from "child_process";
 import pidusage from "pidusage";
 
 const prisma = new PrismaClient();
 const maxChildsCount = 5;
-const ramCheckCycle = 30;
+
+const codeDir = process.env.CODE_DIR as string;
+const memoryCheckMS = 10;
 
 let app = express();
 let port = process.env.PORT || 5690;
@@ -22,9 +24,11 @@ let childs = 0;
 
 interface JudgeResult {
   error: string | null;
+  errorType: string | null;
   score: number;
   ram: number;
   time: number;
+  scoreTypes: string[];
 }
 
 interface Language {
@@ -51,247 +55,318 @@ let langs: { [key: string]: Language } = {
   },
 };
 
+export function getTmpPath(uid: string) {
+  return pjoin(codeDir, uid);
+}
+
+function initTempEnv(uid: string) {
+  const tmpPath = getTmpPath(uid);
+  execSync(
+    `adduser --ingroup execute --disabled-password --no-create-home --force-badname ${uid}`,
+    {
+      stdio: "ignore",
+    }
+  );
+  mkdirSync(tmpPath, { recursive: true });
+  execSync(`chown ${uid} ${tmpPath}`, { stdio: "ignore" });
+
+  return tmpPath;
+}
+
+function clearTempEnv(uid: string) {
+  const tmpPath = getTmpPath(uid);
+  rmSync(tmpPath, { recursive: true });
+  execSync(`deluser ${uid}`, { stdio: "ignore" });
+}
+
+function getLimitString(memoryLimit: number | null, command: string) {
+  return `${memoryLimit ? `ulimit -v ${memoryLimit * 1024};` : ""}${command}`;
+}
+
+type JudgeResult__ = "AC" | "TLE" | "WA" | "RE";
+
+function isSame(in1: string, in2: string): boolean {
+  let res1 = in1
+      .replace(/"\n\n"/gi, "\n")
+      .split("\n")
+      .map((str) => str.trimEnd())
+      .filter((x) => x),
+    res2 = in2
+      .replace(/"\n\n"/gi, "\n")
+      .split("\n")
+      .map((str) => str.trimEnd())
+      .filter((x) => x);
+  return res1.length === res2.length && res1.every((x, i) => x === res2[i]);
+}
+
 async function judge(v: SourceCode, sourcode: string) {
-  return new Promise<JudgeResult>((resolve, reject) => {
-    let pro: Problem;
-    let lang: Language;
-    let codeFilePath: string;
-    let buildedFilePath: string;
+  let problem: Problem;
+  let language = langs[v.type];
+  let distFile: string;
+  let maxMemoryUsage: number = 0;
+  let maxTimeUsage: number = 0;
 
-    let maxRam = 0;
-    let error: string | null = null;
-    let ntime = 0;
-    let scoreSum = 0;
+  const build = (
+    buildCommand: string,
+    output: string,
+    src: string,
+    username: string
+  ) => {
+    return new Promise<{ success: boolean; error: string }>(
+      (resolve, reject) => {
+        const child = spawn("su", [
+          "-m",
+          username,
+          "-c",
+          buildCommand.replace("$output", output).replace("$file", src),
+        ]);
 
-    const build = () => {
-      return new Promise<string>((resolve, reject) => {
-        if (lang.buildCommand == null) {
-          buildedFilePath = codeFilePath;
-          resolve("");
+        let stdout = "",
+          stderr = "";
+
+        child.stdout.on("data", (data: any) => {
+          stdout += data;
+        });
+
+        child.stderr.on("data", (data: any) => {
+          stderr += data;
+        });
+
+        child.on("exit", function () {
+          child.kill();
+        });
+
+        child.on("close", (code) => {
+          if (stderr.length > 0) {
+            resolve({
+              success: false,
+              error: stderr,
+            });
+          }
+          resolve({
+            success: true,
+            error: stdout,
+          });
+        });
+      }
+    );
+  };
+
+  const judge = (
+    input: string,
+    output: string,
+    runCommand: string,
+    username: string
+  ) => {
+    return new Promise<JudgeResult__>((resolve, reject) => {
+      let st = new Date().getTime();
+
+      const child = spawn("su", ["-m", username, "-c", runCommand], {
+        stdio: ["pipe", "pipe", "pipe"],
+        detached: true,
+      });
+
+      let stdout = "",
+        stderr = "";
+      let timeouted = false;
+
+      child.stdout.on("data", (data: any) => {
+        stdout += data;
+      });
+
+      child.stderr.on("data", (data: any) => {
+        stderr += data;
+        if (!child.killed) child.kill();
+      });
+
+      child.stdin.write(input + "\n");
+      child.stdin.end();
+
+      let timeoutHandler = setTimeout(async () => {
+        timeouted = true;
+        if (!child.killed) child.kill();
+        clearInterval(memoryUsageChecker);
+        resolve("TLE");
+      }, problem.maxTime + 100);
+
+      let memoryUsageChecker = setInterval(() => {
+        if (child.killed) {
+          clearInterval(memoryUsageChecker);
           return;
         }
 
-        buildedFilePath = pjoin(process.env.CODE_DIR as string, v.id);
+        if (child.pid) {
+          pidusage(child.pid, (e, s) => {
+            if (s && s.memory)
+              maxMemoryUsage = Math.max(maxMemoryUsage, s.memory);
+            if (s == null) clearInterval(memoryUsageChecker);
+          });
+        }
+      }, memoryCheckMS);
 
-        let buildCMD = lang.buildCommand
-          .replace("$file", codeFilePath)
-          .replace("$output", buildedFilePath);
-
-        console.log("Build command: " + buildCMD);
-
-        let cmdSplit = buildCMD.split(" ");
-
-        let execa_arga = cmdSplit[0];
-        let execa_argb = cmdSplit.slice(1);
-
-        let exec = execa(execa_arga, execa_argb);
-
-        let output = "";
-        let errput = "";
-        exec?.stdout?.on("data", (data: string) => {
-          output += data;
-        });
-
-        exec?.stderr?.on("data", (data: string) => {
-          errput += data;
-        });
-
-        exec.on("exit", () => {
-          resolve(errput);
-        });
+      child.on("exit", function () {
+        clearTimeout(timeoutHandler);
+        clearInterval(memoryUsageChecker);
+        child.kill();
       });
-    };
 
-    const judgeSub = (input: string, routput: string) => {
-      return new Promise<boolean>(async (resolve, reject) => {
-        let execCMD = lang.runCommand?.replace(
-          "$file",
-          buildedFilePath
-        ) as string;
-        let cmdSplit = execCMD.split(" ");
-        let execa_arga = cmdSplit[0];
-        let execa_argb = cmdSplit.slice(1);
+      if (child.pid) {
+        pidusage(child.pid, (e, s) => {
+          if (s && s.memory)
+            maxMemoryUsage = Math.max(maxMemoryUsage, s.memory);
+        });
+      }
 
-        let exec = execa(execa_arga, execa_argb);
+      child.on("close", (code) => {
+        clearTimeout(timeoutHandler);
+        clearInterval(memoryUsageChecker);
 
-        let st: Date;
-        let ed: Date;
-        let right = true;
+        let ed = new Date().getTime();
 
-        const maxRAMBytes = pro.maxMemoryMB * 1000000;
+        maxTimeUsage = Math.max(maxTimeUsage, ed - st);
 
-        let output = "";
-        let errorput = "";
-        let ramlimited = false;
-        let ramInvi: any;
-
-        let tx = 0;
-
-        function ramMonitor() {
-          if (exec.killed) {
-            clearInterval(ramInvi);
-            return;
-          }
-          try {
-            pidusage(exec.pid as number)
-              .then((st) => {
-                maxRam = Math.max(maxRam, st.memory);
-                if (st.memory > maxRAMBytes) {
-                  exec.kill("SIGKILL");
-                  pidusage.clear();
-                  ramlimited = true;
-                }
-              })
-              .catch((err) => {
-                if (exec.killed) {
-                  clearInterval(ramInvi);
-                  return;
-                }
-              });
-          } catch {
-            clearInterval(ramInvi);
-            return;
-          }
-
-          tx += ramCheckCycle;
-
-          if (tx > pro.maxTime) {
-            error = "Timeout";
-            clearInterval(ramInvi);
-            exec.kill("SIGKILL");
-          }
+        if (stderr.length > 0) {
+          console.log("RE ", stderr);
+          resolve("RE");
         }
 
-        exec.on("spawn", () => {
-          st = new Date();
-          console.log("Input : " + input);
-          if (
-            exec.stdin?.writable &&
-            exec.stdin.writableFinished == false &&
-            exec.stdin.writableEnded == false &&
-            exec.killed == false &&
-            input.trim().replace(/"\n"/gi, "").length > 0
-          ) {
-            try {
-              exec.stdin?.write(input + "\n", "utf-8", (err) => {
-                console.log("ERR WRITE : " + err);
-              });
-            } catch (e) {
-              console.log("ERR WRITE : " + e);
-            }
-          }
-        });
-
-        ramInvi = setInterval(ramMonitor, ramCheckCycle);
-
-        exec.stdout?.on("data", (data) => {
-          output += data.toString();
-        });
-
-        exec.stderr?.on("data", (data) => {
-          error = errorput;
-          clearInterval(ramInvi);
-          exec.kill("SIGKILL");
-        });
-
-        exec.on("exit", () => {
-          ed = new Date();
-          ntime = Math.max(ntime, ed.getTime() - st.getTime());
-
-          if (ramlimited) {
-            right = false;
-          } else if (errorput) {
-            right = false;
-          } else {
-            if (output.trim() != routput.trim()) {
-              right = false;
-            }
-          }
-
-          if (ntime > pro.maxTime && (error == "" || error == null)) {
-            error = "Timeout";
-          }
-
-          clearInterval(ramInvi);
-          resolve(right);
-        });
+        if (isSame(output, stdout)) resolve("AC");
+        else resolve("WA");
       });
-    };
+    });
+  };
 
-    const run = () => {
-      return new Promise<JudgeResult>(async (resolve, reject) => {
-        let testCaseGroup = pro.testCase as Array<
-          Array<{ input: string; output: string } | number>
-        >;
-
-        for (let i = 0; i < testCaseGroup.length; i++) {
-          let testCases = testCaseGroup[i].slice(1);
-          let thisGroupScore = testCaseGroup[i][0] as number;
-
-          let rig = true;
-
-          for (let j = 0; j < testCases.length; j++) {
-            let testCase = testCases[j] as {
-              input: string;
-              output: string;
-            };
-            rig = (await judgeSub(testCase.input, testCase.output)) && rig;
-            if (!rig) break;
-          }
-
-          if (rig) {
-            scoreSum += thisGroupScore;
-          }
-        }
-
-        resolve({
-          error: error,
-          ram: maxRam,
-          score: scoreSum,
-          time: ntime,
-        });
-      });
-    };
-
-    prisma.problem
-      .findFirst({
-        where: {
-          id: v.problem,
-        },
-      })
-      .then(async (p) => {
-        if (p == null) return;
-        if (p.testCase == null) return;
-
-        lang = langs[v.type];
-        pro = p;
-        codeFilePath = pjoin(
-          process.env.CODE_DIR as string,
-          v.id + "." + lang.fileExt
+  const judgeSubtask = (
+    subtasks: (number | { input: string; output: string })[],
+    username: string
+  ) => {
+    return new Promise<JudgeResult__>(async (resolve, reject) => {
+      for (let i = 0; i < subtasks.length; i++) {
+        let subtask = subtasks[i];
+        if (typeof subtask == "number") continue;
+        let result = await judge(
+          subtask.input,
+          subtask.output,
+          getLimitString(
+            problem.maxMemoryMB * 1024,
+            (language.runCommand || "").replace("$file", distFile)
+          ),
+          username
         );
 
-        writeFile(codeFilePath, sourcode, async (err) => {
-          let builded = await build();
+        if (result == "RE") {
+          resolve("RE");
+          return "RE";
+        }
 
-          let result: JudgeResult = {
-            error: builded,
-            ram: 2147483647,
-            score: 0,
-            time: 2147483647,
-          };
-          if (builded == "") {
-            result = await run();
-            console.log("Judge Done!");
-          } else {
-            console.log("Judge Done with error.");
-          }
-          resolve(result);
+        if (result == "TLE") {
+          resolve("TLE");
+          return "TLE";
+        }
+
+        if (result == "WA") {
+          resolve("WA");
+          return "WA";
+        }
+      }
+
+      resolve("AC");
+      return "AC";
+    });
+  };
+
+  return new Promise<JudgeResult>(async (resolve, reject) => {
+    initTempEnv(v.id);
+
+    let srcFile = pjoin(codeDir, v.id, `${v.id}.${language.fileExt}`);
+    let buildOutputFile = pjoin(codeDir, v.id, `${v.id}`);
+
+    writeFileSync(srcFile, sourcode, "utf-8");
+
+    if (language.buildCommand) {
+      let buildSuccess = await build(
+        language.buildCommand,
+        buildOutputFile,
+        srcFile,
+        v.id
+      );
+
+      if (buildSuccess.success == false) {
+        console.log("Build failed");
+
+        rmSync(srcFile);
+        clearTempEnv(v.id);
+
+        resolve({
+          error: buildSuccess.error,
+          errorType: "CE",
+          ram: 2147483647,
+          score: -1,
+          scoreTypes: [],
+          time: 2147483647,
         });
+        return;
+      }
+    }
+
+    distFile = language.buildCommand ? buildOutputFile : srcFile;
+
+    let problem_ = await prisma.problem.findFirst({
+      where: {
+        id: v.problem,
+      },
+    });
+
+    if (problem_ == null) {
+      rmSync(srcFile);
+      if (language.buildCommand) rmSync(distFile);
+      clearTempEnv(v.id);
+
+      resolve({
+        error: "Problem Not Found",
+        errorType: "PNF",
+        ram: 2147483647,
+        score: -1,
+        scoreTypes: [],
+        time: 2147483647,
       });
+
+      return;
+    }
+
+    problem = problem_;
+
+    let result: JudgeResult__[] = [];
+
+    let tc = problem.testCase as (
+      | number
+      | { input: string; output: string }
+    )[][];
+
+    let score = 0;
+
+    for (let i = 0; i < tc.length; i++) {
+      let tcsx = tc[i];
+      result.push(await judgeSubtask(tcsx, v.id));
+      if (result[i] == "AC") score += tcsx[0] as number;
+    }
+
+    rmSync(srcFile);
+    if (language.buildCommand) rmSync(distFile);
+    clearTempEnv(v.id);
+
+    resolve({
+      error: null,
+      errorType: null,
+      ram: maxMemoryUsage,
+      time: maxTimeUsage,
+      score: score,
+      scoreTypes: result,
+    });
   });
 }
 
-function queueing() {
+async function queueing() {
   if (childs > maxChildsCount || queue.length == 0) return;
 
   let qf = queue[0];
@@ -299,115 +374,58 @@ function queueing() {
 
   childs++;
 
-  prisma.submittedCode
-    .findUnique({
-      where: {
-        id: qf,
-      },
-    })
-    .then((code) => {
-      if (code == null) return;
-      prisma.sourceCode
-        .findUnique({
-          where: {
-            id: qf,
-          },
-        })
-        .then(async (v) => {
-          if (v == null) return;
-          let jresult: JudgeResult;
+  let sourceCd = await prisma.sourceCode.findFirst({
+    where: {
+      id: qf,
+    },
+  });
 
-          const updateDB_Result = async () => {
-            prisma.user
-              .findFirst({
-                where: {
-                  id: v.user,
-                },
-              })
-              .then(async (y) => {
-                if (y == null) return;
+  if (sourceCd == null) {
+    childs--;
+    return;
+  }
 
-                const subR = () => {
-                  prisma.sourceCode
-                    .update({
-                      where: {
-                        id: qf,
-                      },
-                      data: {
-                        usedMemory: jresult.ram.toString(),
-                        usedTime: jresult.time.toString(),
-                        error: (jresult.error || "").toString(),
-                        score: jresult.score || 0,
-                      },
-                    })
-                    .then(() => {
-                      childs--;
-                      queueing();
-                    });
-                };
+  let source = await prisma.submittedCode.findFirst({
+    where: {
+      id: qf,
+    },
+  });
 
-                if (
-                  jresult.score == 100 &&
-                  !y.solvedProblems.includes(v.problem)
-                ) {
-                  prisma.problem
-                    .findFirst({
-                      where: {
-                        id: v.problem,
-                      },
-                    })
-                    .then(async (p) => {
-                      if (p == null) return;
-                      y.solvedProblems.push(v.problem);
-                      await prisma.user
-                        .update({
-                          where: {
-                            id: v.user,
-                          },
-                          data: {
-                            solvedProblems: y.solvedProblems,
-                            havingPoint: y.havingPoint + p.point,
-                          },
-                        })
-                        .then((_) => {
-                          prisma.problem
-                            .update({
-                              where: {
-                                id: v.problem,
-                              },
-                              data: {
-                                solvedPeopleCount: p.solvedPeopleCount + 1,
-                              },
-                            })
-                            .then((_) => {
-                              subR();
-                            });
-                        });
-                    });
-                } else {
-                  subR();
-                }
-              });
-          };
+  if (source == null) {
+    childs--;
+    return;
+  }
 
-          // Judge
-          judge(v, code.code).then((v) => {
-            jresult = v;
-            updateDB_Result();
-          });
-        });
-    });
+  let result = await judge(sourceCd, source.code);
+
+  console.log("RESULT", result);
+
+  await prisma.sourceCode.update({
+    where: {
+      id: qf,
+    },
+    data: {
+      error: result.error,
+      errorType: result.errorType,
+      usedMemory: result.ram.toString(),
+      usedTime: result.time.toString(),
+      score: result.score,
+      scoreType: result.scoreTypes,
+    },
+  });
+
+  queueing();
 }
 
 app.post("/judge", (req, res) => {
   queue.push(req.query.id as string);
-  if (childs <= maxChildsCount) queueing();
   res.send(req.query.id);
+  if (childs <= maxChildsCount) queueing();
 });
 
 app.listen(port, () => {
   console.log(`------------------------------
            Checker             
-           v1.0.0.0           
+           v2.0.0.0           
 ------------------------------`);
 });
