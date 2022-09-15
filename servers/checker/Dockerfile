@@ -24,6 +24,7 @@ WORKDIR /opt/app/servers/checker
 
 RUN yarn install
 RUN npx prisma generate
+RUN mkdir /opt/app/servers/checker/code
 
 EXPOSE 5690
 ENTRYPOINT ["/bin/bash"]
