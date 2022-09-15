@@ -183,7 +183,7 @@ async function judge(v: SourceCode, sourcode: string) {
           subtask.output,
           getLimitString(
             problem.maxMemoryMB * 1024,
-            20,
+            98,
             (language.runCommand || "").replace("$file", distFile)
           )
         );
