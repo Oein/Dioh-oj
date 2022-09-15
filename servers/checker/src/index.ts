@@ -60,7 +60,7 @@ export function getTmpPath(uid: string) {
 function initTempEnv(uid: string) {
   const tmpPath = getTmpPath(uid);
   execSync(
-    `adduser --ingroup execute --disabled-password --no-create-home ${uid}`,
+    `adduser --ingroup execute --disabled-password --no-create-home --force-badname ${uid}`,
     {
       stdio: "ignore",
     }
