@@ -397,6 +397,20 @@ async function queueing() {
 
   console.log("RESULT", result);
 
+  await prisma.sourceCode.update({
+    where: {
+      id: qf,
+    },
+    data: {
+      error: result.error,
+      errorType: result.errorType,
+      usedMemory: result.ram.toString(),
+      usedTime: result.time.toString(),
+      score: result.score,
+      scoreType: result.scoreTypes,
+    },
+  });
+
   queueing();
 }
 
