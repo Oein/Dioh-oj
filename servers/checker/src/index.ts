@@ -402,8 +402,8 @@ async function queueing() {
 
 app.post("/judge", (req, res) => {
   queue.push(req.query.id as string);
-  if (childs <= maxChildsCount) queueing();
   res.send(req.query.id);
+  if (childs <= maxChildsCount) queueing();
 });
 
 app.listen(port, () => {
