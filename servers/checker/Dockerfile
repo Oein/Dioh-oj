@@ -29,4 +29,5 @@ RUN mkdir /opt/app/servers/checker/code
 RUN addgroup execute
 
 EXPOSE 5690
+EXPOSE 5680
 ENTRYPOINT ["/bin/bash"]
