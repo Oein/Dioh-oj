@@ -40,7 +40,7 @@ export default function Footer() {
                     color: "var(--nextui-colors-accents7)",
                   }}
                 >
-                  (v.1.20.0)
+                  (v.1.20.0-1)
                 </Text>
               </Grid>
             </Grid.Container>
