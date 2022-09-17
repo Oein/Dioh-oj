@@ -34,6 +34,86 @@ const MD = dynamic(() => import("../../components/ProblemPage/md"), {
   suspense: true,
 });
 
+const ScoreDiv = ({
+  json_state,
+  nfont,
+}: {
+  json_state: any;
+  nfont?: boolean;
+}) => {
+  let fontS = nfont ? "" : "var(--nextui-fontSizes-3xl)";
+  return (json_state["a"].scoreType as string[]).includes("TLE") ? (
+    json_state["a"].score == 0 ? (
+      <div
+        style={{
+          color: "var(--nextui-colors-error)",
+          fontSize: fontS,
+        }}
+      >
+        TLE
+      </div>
+    ) : (
+      <div
+        style={{
+          color: "var(--nextui-colors-warning)",
+          fontSize: fontS,
+        }}
+      >
+        TLE / {json_state["a"].score}
+      </div>
+    )
+  ) : json_state["a"].score == 100 ? (
+    <div
+      style={{
+        color: "var(--nextui-colors-success)",
+        fontSize: fontS,
+      }}
+    >
+      Success
+    </div>
+  ) : json_state["a"].score == 0 ? (
+    (json_state["a"].error || "").length > 0 ? (
+      <div
+        style={{
+          color: "var(--nextui-colors-error)",
+          fontSize: fontS,
+        }}
+      >
+        ERR
+      </div>
+    ) : json_state["a"].usedTime == null ? (
+      <div
+        style={{
+          color: "var(--nextui-colors-neutral)",
+          fontSize: fontS,
+        }}
+        className="centerH"
+      >
+        Judging...
+      </div>
+    ) : (
+      <div
+        style={{
+          color: "var(--nextui-colors-error)",
+          fontSize: fontS,
+        }}
+        className="centerH"
+      >
+        0
+      </div>
+    )
+  ) : (
+    <div
+      style={{
+        color: "var(--nextui-colors-warning)",
+        fontSize: fontS,
+      }}
+    >
+      {json_state["a"].score}
+    </div>
+  );
+};
+
 export default function SubmitStatus() {
   // Realtime submits
   let [submits, setSubmits] = useState<SourceCode[]>([]);
@@ -201,7 +281,6 @@ export default function SubmitStatus() {
             return;
           }
           setJSONSTATE(v.data);
-          console.log(v.data);
         })
         .catch((err) => {
           toast(`ERR / ${err}`, {
@@ -246,76 +325,7 @@ export default function SubmitStatus() {
             <div>
               <Grid.Container>
                 <Grid>
-                  {json_state["a"].error == "Timeout" ? (
-                    json_state["a"].score == 0 ? (
-                      <div
-                        style={{
-                          color: "var(--nextui-colors-error)",
-                          fontSize: "var(--nextui-fontSizes-3xl)",
-                        }}
-                      >
-                        TLE
-                      </div>
-                    ) : (
-                      <div
-                        style={{
-                          color: "var(--nextui-colors-warning)",
-                          fontSize: "var(--nextui-fontSizes-3xl)",
-                        }}
-                      >
-                        TLE / {json_state["a"].score}
-                      </div>
-                    )
-                  ) : json_state["a"].score == 100 ? (
-                    <div
-                      style={{
-                        color: "var(--nextui-colors-success)",
-                        fontSize: "var(--nextui-fontSizes-3xl)",
-                      }}
-                    >
-                      Success
-                    </div>
-                  ) : json_state["a"].score == 0 ? (
-                    (json_state["a"].error || "").length > 0 ? (
-                      <div
-                        style={{
-                          color: "var(--nextui-colors-error)",
-                          fontSize: "var(--nextui-fontSizes-3xl)",
-                        }}
-                      >
-                        ERR
-                      </div>
-                    ) : json_state["a"].usedTime == null ? (
-                      <div
-                        style={{
-                          color: "var(--nextui-colors-neutral)",
-                          fontSize: "var(--nextui-fontSizes-3xl)",
-                        }}
-                        className="centerH"
-                      >
-                        Judging...
-                      </div>
-                    ) : (
-                      <div
-                        style={{
-                          color: "var(--nextui-colors-error)",
-                          fontSize: "var(--nextui-fontSizes-3xl)",
-                        }}
-                        className="centerH"
-                      >
-                        0
-                      </div>
-                    )
-                  ) : (
-                    <div
-                      style={{
-                        color: "var(--nextui-colors-warning)",
-                        fontSize: "var(--nextui-fontSizes-3xl)",
-                      }}
-                    >
-                      {json_state["a"].score}
-                    </div>
-                  )}
+                  <ScoreDiv json_state={json_state} />
                 </Grid>
                 <Grid>
                   <div
@@ -390,6 +400,60 @@ export default function SubmitStatus() {
                   </div>
                 </>
               ) : null}
+
+              <Table>
+                <Table.Header>
+                  <Table.Column>테스트 케이스</Table.Column>
+                  <Table.Column>결과</Table.Column>
+                </Table.Header>
+                <Table.Body>
+                  {(json_state["a"].scoreType as string[])
+                    .concat([
+                      (json_state["a"].scoreType as string[]).length == 0
+                        ? "구버전에서 채점됨"
+                        : "",
+                    ])
+                    .filter((v) => v != "")
+                    .map((vxe, idx) => {
+                      return (
+                        <Table.Row key={idx}>
+                          <Table.Cell>{idx + 1}번</Table.Cell>
+                          <Table.Cell>
+                            {vxe == "AC" ? (
+                              <div
+                                style={{
+                                  color: "var(--nextui-colors-success)",
+                                }}
+                              >
+                                AC
+                              </div>
+                            ) : vxe == "TLE" ? (
+                              json_state["a"].score == 0 ? (
+                                <div
+                                  style={{
+                                    color: "var(--nextui-colors-error)",
+                                  }}
+                                >
+                                  TLE
+                                </div>
+                              ) : (
+                                <div
+                                  style={{
+                                    color: "var(--nextui-colors-warning)",
+                                  }}
+                                >
+                                  TLE
+                                </div>
+                              )
+                            ) : (
+                              vxe
+                            )}
+                          </Table.Cell>
+                        </Table.Row>
+                      );
+                    })}
+                </Table.Body>
+              </Table>
             </div>
           )}
         </Modal.Body>
@@ -485,67 +549,7 @@ export default function SubmitStatus() {
                     </Link>
                   </Table.Cell>
                   <Table.Cell>
-                    {v.error == "Timeout" ? (
-                      v.score == 0 ? (
-                        <div
-                          style={{
-                            color: "var(--nextui-colors-error)",
-                          }}
-                        >
-                          TLE
-                        </div>
-                      ) : (
-                        <div
-                          style={{
-                            color: "var(--nextui-colors-warning)",
-                          }}
-                        >
-                          TLE / {v.score}
-                        </div>
-                      )
-                    ) : v.score == 100 ? (
-                      <div
-                        style={{
-                          color: "var(--nextui-colors-success)",
-                        }}
-                      >
-                        100
-                      </div>
-                    ) : v.score == 0 ? (
-                      (v.error || "").length > 0 ? (
-                        <div
-                          style={{
-                            color: "var(--nextui-colors-error)",
-                          }}
-                        >
-                          ERR
-                        </div>
-                      ) : v.usedTime == null ? (
-                        <div
-                          style={{
-                            color: "var(--nextui-colors-neutral)",
-                          }}
-                        >
-                          Judging...
-                        </div>
-                      ) : (
-                        <div
-                          style={{
-                            color: "var(--nextui-colors-error)",
-                          }}
-                        >
-                          0
-                        </div>
-                      )
-                    ) : (
-                      <div
-                        style={{
-                          color: "var(--nextui-colors-warning)",
-                        }}
-                      >
-                        {v.score}
-                      </div>
-                    )}
+                    <ScoreDiv json_state={{ a: v }} nfont={true} />
                   </Table.Cell>
                   <Table.Cell>
                     {(langName[v.type as string] as string) ||
