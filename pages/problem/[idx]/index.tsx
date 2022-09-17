@@ -128,8 +128,16 @@ export default function ProblemPage() {
         <MyHead />
 
         {/* Toc */}
-        <div className="toc">
-          <Headings headings={nestedHeadings} />
+        <div className="closeNF">
+          <input type="checkbox" id="tocOF" />
+          <label htmlFor="tocOF">
+            <span></span>
+            <span></span>
+            <span></span>
+          </label>
+          <div className="toc">
+            <Headings headings={nestedHeadings} />
+          </div>
         </div>
 
         {/* Option Menu */}
