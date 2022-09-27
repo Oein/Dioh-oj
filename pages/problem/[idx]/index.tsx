@@ -20,7 +20,11 @@ const NFullLoad = dynamic(() => import("../../../components/Loading/nFull"), {
 });
 
 const Headings = ({ headings }: { headings: any }) => (
-  <ul>
+  <ul
+    style={{
+      pointerEvents: "all",
+    }}
+  >
     {headings.map((heading: any, index: number) =>
       heading.id.length > 0 ? (
         <li key={heading.id}>
@@ -31,6 +35,8 @@ const Headings = ({ headings }: { headings: any }) => (
               document.querySelector(`#${heading.id}`)?.scrollIntoView({
                 behavior: "smooth",
               });
+              (document.querySelector(`#tocOF`) as HTMLInputElement).checked =
+                false;
             }}
           >
             {index + 1}. {heading.title}
@@ -46,6 +52,9 @@ const Headings = ({ headings }: { headings: any }) => (
                       document.querySelector(`#${child.id}`)?.scrollIntoView({
                         behavior: "smooth",
                       });
+                      (
+                        document.querySelector(`#tocOF`) as HTMLInputElement
+                      ).checked = false;
                     }}
                   >
                     └ {child.title}
@@ -128,14 +137,29 @@ export default function ProblemPage() {
         <MyHead />
 
         {/* Toc */}
-        <div className="closeNF">
+        <div
+          className="closeNF"
+          style={{
+            pointerEvents: "none",
+          }}
+        >
           <input type="checkbox" id="tocOF" />
-          <label htmlFor="tocOF">
+          <label
+            htmlFor="tocOF"
+            style={{
+              pointerEvents: "all",
+            }}
+          >
             <span></span>
             <span></span>
             <span></span>
           </label>
-          <div className="toc">
+          <div
+            className="toc"
+            style={{
+              pointerEvents: "all",
+            }}
+          >
             <Headings headings={nestedHeadings} />
           </div>
         </div>

@@ -206,6 +206,10 @@ code {
     top: 87px;
   }
 
+  .closeNF:not(#tocOF:not(#tocOF:checked)) {
+    pointer-events: all !important;
+  }
+
   #tocOF:not(#tocOF:checked) + label {
     background-color: rgba(255, 255, 255);
   }
