@@ -93,7 +93,7 @@ export default function AdminPannel() {
           onScrollPositionChange={(num) => {}}
         >
           <Navbar.Brand>
-            <Text size="$3xl">Dioh Admin Pannel</Text>
+            <Text size="$3xl">DiohOJ Admin Pannel</Text>
           </Navbar.Brand>
           <Navbar.Content
             variant="underline-rounded"
@@ -107,7 +107,7 @@ export default function AdminPannel() {
                     color: "var(--nextui-colors-text)",
                   }}
                 >
-                  Dioh
+                  DiohOJ
                 </div>
               </Link>
             </Navbar.Item>

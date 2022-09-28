@@ -28,7 +28,7 @@ export default function Footer() {
             <Grid.Container>
               <Grid>
                 <Text size="$4xl" className="fontX">
-                  Dioh
+                  DiohOJ
                 </Text>
               </Grid>
               <Grid>
@@ -59,7 +59,7 @@ export default function Footer() {
                 </div>
               </Grid>
               <Grid>
-                <Link href="https://github.com/oein/dioh">Github</Link>
+                <Link href="https://github.com/oein/Dioh-oj">Github</Link>
               </Grid>
               <Grid>
                 <div

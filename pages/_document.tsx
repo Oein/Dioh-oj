@@ -13,12 +13,12 @@ export default function Document() {
         <meta name="author" content="Oein , Dina"></meta>
         <meta
           name="description"
-          content="Dioh is a online judge website for who enjoies coding."
+          content="DiohOJ is a online judge website for who enjoies coding."
         ></meta>
-        <meta property="og:title" content="Dioh"></meta>
+        <meta property="og:title" content="DiohOJ"></meta>
         <meta
           name="og:description"
-          content="Dioh is a online judge website for who enjoies coding."
+          content="DiohOJ is a online judge website for who enjoies coding."
         ></meta>
         <meta
           name="google-site-verification"

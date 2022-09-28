@@ -12,7 +12,7 @@ export default function WAD() {
               textAlign: "center",
             }}
           >
-            Dioh
+            DiohOJ
           </div>
         </div>
       </article>

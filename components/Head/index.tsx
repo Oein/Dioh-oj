@@ -106,7 +106,7 @@ export default function MyHead() {
             }}
             className="fontX"
           >
-            Dioh
+            DiohOJ
           </h1>
         </Link>
         <div

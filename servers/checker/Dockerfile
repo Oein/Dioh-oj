@@ -13,7 +13,7 @@ RUN apt-get -qq install -y g++ cmake wget unzip python3 build-essential git nano
 RUN apt-get clean
 
 RUN mkdir /opt/app
-RUN git clone https://github.com/Oein/Dioh.git /opt/app
+RUN git clone https://github.com/Oein/DiohOJ-oj.git /opt/app
 
 WORKDIR /opt/app
 

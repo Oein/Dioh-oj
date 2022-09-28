@@ -28,7 +28,7 @@ export default function Main() {
               }}
               className="fontX"
             >
-              Dioh / 디오
+              Dioh Online Judge / 디오
             </div>
             <div
               style={{
